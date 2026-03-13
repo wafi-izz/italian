@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const fs=require\\(''fs''\\); const d=fs.readFileSync\\(''c:\\\\\\\\ProgramData\\\\\\\\Wafi\\\\\\\\Italian\\\\\\\\dovere\\\\\\\\data.js'',''utf8''\\); console.log\\(''dovere lines:'', d.split\\(''\\\\n''\\).length, ''last 20 chars:'', JSON.stringify\\(d.slice\\(-20\\)\\)\\)\")",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//c/ProgramData/Wafi/Italian/$dir/**)",
+      "Bash(done)",
+      "Bash(node validate.js)",
+      "Bash(node validate.js mangiare)",
+      "Bash(node _debug_extract.js)",
+      "Bash(node verify-online.js dire mangiare dormire)",
+      "Bash(node verify-online.js dire mangiare)",
+      "Bash(node verify-online.js)",
+      "Bash(node -e \":*)",
+      "Bash(node generate-verb.js parlare \"to speak / to talk\" --dry-run)",
+      "Bash(node generate-verb.js dire \"to say / to tell\" --dry-run)",
+      "Bash(node generate-verb.js parlare \"to speak\" --fallback --dry-run)",
+      "Bash(node _test_parse.js)",
+      "Bash(node _test_parse2.js)",
+      "Bash(node generate-verb.js andare \"to go\" --dry-run)",
+      "Bash(ls -d c:/ProgramData/Wafi/Italian/*/data.js)"
+    ]
+  }
+}

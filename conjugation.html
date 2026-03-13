@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italian Conjugation Tables</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #1a1a2e; color: #eee; padding: 20px; }
+  h1 { text-align: center; color: #f5c518; font-size: 1.4em; margin-bottom: 6px; }
+  h2 { text-align: center; font-size: 1.05em; margin: 30px 0 6px; padding: 8px 16px; border-radius: 8px; display: inline-block; width: 100%; box-sizing: border-box; }
+  .ire-title { background: #1a2a7a; }
+  .subtitle { text-align:center; font-size:0.82em; color:#aaa; margin-bottom:10px; }
+  .scroll { overflow-x: auto; margin-bottom: 6px; }
+  table { border-collapse: collapse; min-width: 960px; width: 100%; font-size: 0.76em; }
+  th, td { border: 1px solid #444; padding: 6px 8px; text-align: center; white-space: nowrap; }
+  th.pc, td.pc { background: #2a2a4a; font-weight: bold; color: #f5c518; position: sticky; left: 0; z-index: 1; min-width: 70px; }
+  th { font-size: 0.73em; padding: 7px 5px; }
+
+  .h-pres  { background: #1e4d20; }
+  .h-prog  { background: #103a47; }
+  .h-pp    { background: #4a2e0a; }
+  .h-imp   { background: #3a1a4a; }
+  .h-pr    { background: #4a1010; }
+  .h-fut   { background: #102a4a; }
+  .h-cond  { background: #2e2e0a; }
+  .h-imper { background: #4a1a1a; }
+  .h-refl  { background: #0a3a2a; }
+
+  .pres  { background: #122a13; }
+  .prog  { background: #08222d; }
+  .pp    { background: #2d1a06; }
+  .imperf{ background: #1e0f2d; }
+  .pr    { background: #2d0a0a; }
+  .fut   { background: #08192d; }
+  .cond  { background: #1a1a06; }
+  .imper { background: #2d0f0f; }
+  .refl  { background: #081e16; }
+
+  /* ending badge */
+  .end { display:inline-block; background:#f5c518; color:#111; border-radius:4px; padding:1px 5px; font-size:0.78em; font-weight:bold; margin-left:5px; vertical-align:middle; }
+  .stem-note { display:inline-block; background:#888; color:#fff; border-radius:4px; padding:1px 4px; font-size:0.7em; margin-left:3px; vertical-align:middle; }
+
+  .note { background: #1a1a3a; border-left: 4px solid #f5c518; padding: 9px 13px; margin: 6px 0 10px; font-size: 0.8em; border-radius: 4px; }
+
+  /* Similar forms section */
+  .similar-box { background: #111128; border: 1px solid #555; border-radius: 8px; padding: 14px 16px; margin: 10px 0 28px; }
+  .similar-box h3 { color: #f5c518; font-size: 0.9em; margin: 0 0 10px; }
+  .sim-table { width: 100%; border-collapse: collapse; font-size: 0.78em; min-width: 500px; }
+  .sim-table th { background: #2a2a4a; padding: 6px 10px; text-align: left; color: #ccc; }
+  .sim-table td { padding: 7px 10px; border-bottom: 1px solid #333; vertical-align: top; }
+  .sim-table tr:last-child td { border-bottom: none; }
+  .form-tag { background: #333; border: 1px solid #666; border-radius: 4px; padding: 2px 7px; font-style: italic; font-weight: bold; color: #fff; white-space: nowrap; }
+  .tense-tag { border-radius: 4px; padding: 2px 7px; font-size: 0.85em; white-space: nowrap; }
+  .t-pres  { background: #1e4d20; }
+  .t-imp   { background: #4a1010; }
+  .t-imper { background: #4a1a1a; }
+  .t-pp    { background: #4a2e0a; }
+  .t-fut   { background: #102a4a; }
+  .t-cond  { background: #2e2e0a; }
+  .t-imperf{ background: #3a1a4a; }
+  .tip { color: #7ef5a0; font-size: 0.9em; }
+
+  .legend { display:flex; flex-wrap:wrap; gap:7px; margin:10px 0; justify-content:center; }
+  .leg { padding:3px 9px; border-radius:10px; font-size:0.7em; font-weight:bold; }
+
+  /* Example sentences section */
+  .examples-section { margin: 30px 0 28px; }
+  .examples-section h2 { background: #2a1a4a; }
+  .ex-block { background: #111128; border: 1px solid #555; border-radius: 8px; padding: 14px 16px; margin: 10px 0 16px; }
+  .ex-block h3 { color: #f5c518; font-size: 0.88em; margin: 0 0 12px; }
+  .ex-pair { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #2a2a4a; }
+  .ex-pair:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .ex-it { font-size: 0.92em; font-style: italic; color: #fff; margin-bottom: 4px; line-height: 1.5; }
+  .ex-en { font-size: 0.82em; color: #aaa; line-height: 1.4; }
+  .ex-pronoun { display: inline-block; background: #2a2a4a; color: #f5c518; border-radius: 4px; padding: 1px 7px; font-size: 0.8em; font-weight: bold; margin-right: 6px; font-style: normal; }
+  .ex-tense-label { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 0.78em; font-weight: bold; margin-right: 6px; }
+  .ex-verb { font-weight: bold; color: #7ef5a0; font-style: normal; }
+</style>
+</head>
+<body>
+
+<h1>🇮🇹 Italian Verb Conjugation — Complete Tables</h1>
+<p style="text-align:center;font-size:0.8em;color:#aaa;">Endings shown in <span class="end">-yellow</span> &nbsp;|&nbsp; <span class="stem-note">stem*</span> = stem changes &nbsp;|&nbsp; <span class="stem-note">irr</span> = irregular form</p>
+
+<div class="legend">
+  <span class="leg" style="background:#1e4d20">Presente</span>
+  <span class="leg" style="background:#103a47">Prog. Cont.</span>
+  <span class="leg" style="background:#4a2e0a">Pass. Prossimo</span>
+  <span class="leg" style="background:#3a1a4a">Imperfetto</span>
+  <span class="leg" style="background:#4a1010">Pass. Remoto</span>
+  <span class="leg" style="background:#102a4a">Futuro</span>
+  <span class="leg" style="background:#2e2e0a">Condizionale</span>
+  <span class="leg" style="background:#4a1a1a">Imperativo</span>
+  <span class="leg" style="background:#0a3a2a">Riflessivo</span>
+</div>
+
+
+<!-- ===================== DIRE ===================== -->
+<h2 class="ire-title">🔵 DIRE (to say / to tell) &nbsp;|&nbsp; Irregular -IRE &nbsp;|&nbsp; From Latin: dicere</h2>
+<div class="subtitle">predire, contraddire, maledire, benedire, disdire... (compounds follow the same pattern) &nbsp;|&nbsp; Hidden stem: DIC-</div>
+<div class="scroll">
+<table>
+  <thead>
+    <tr>
+      <th class="pc">Pronoun</th>
+      <th class="h-pres">Presente</th>
+      <th class="h-prog">Pres. Continuo</th>
+      <th class="h-pp">Pass. Prossimo</th>
+      <th class="h-imp">Imperfetto</th>
+      <th class="h-pr">Pass. Remoto</th>
+      <th class="h-fut">Futuro</th>
+      <th class="h-cond">Condizionale</th>
+      <th class="h-imper">Imperativo</th>
+      <th class="h-refl">Riflessivo (dirsi)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="pc">Io</td>
+      <td class="pres"><b>dico</b> <span class="stem-note">irr</span></td>
+      <td class="prog">sto dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">ho <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>evo</b> <span class="end">-evo</span><span class="stem-note">stem*</span></td>
+      <td class="pr"><b>dissi</b> <span class="stem-note">irr</span></td>
+      <td class="fut">dir<b>ò</b> <span class="end">-ò</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>ei</b> <span class="end">-ei</span><span class="stem-note">stem*</span></td>
+      <td class="imper">—</td>
+      <td class="refl">mi <b>dico</b></td>
+    </tr>
+    <tr>
+      <td class="pc">Tu</td>
+      <td class="pres"><b>dici</b> <span class="stem-note">irr</span></td>
+      <td class="prog">stai dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">hai <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>evi</b> <span class="end">-evi</span><span class="stem-note">stem*</span></td>
+      <td class="pr">dic<b>esti</b> <span class="end">-esti</span><span class="stem-note">stem*</span></td>
+      <td class="fut">dir<b>ai</b> <span class="end">-ai</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>esti</b> <span class="end">-esti</span><span class="stem-note">stem*</span></td>
+      <td class="imper"><b>di'!</b> <span class="stem-note">irr</span></td>
+      <td class="refl">ti <b>dici</b></td>
+    </tr>
+    <tr>
+      <td class="pc">Lui/Lei</td>
+      <td class="pres"><b>dice</b> <span class="stem-note">irr</span></td>
+      <td class="prog">sta dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">ha <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>eva</b> <span class="end">-eva</span><span class="stem-note">stem*</span></td>
+      <td class="pr"><b>disse</b> <span class="stem-note">irr</span></td>
+      <td class="fut">dir<b>à</b> <span class="end">-à</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>ebbe</b> <span class="end">-ebbe</span><span class="stem-note">stem*</span></td>
+      <td class="imper"><b>dica!</b> <span class="stem-note">irr</span></td>
+      <td class="refl">si <b>dice</b></td>
+    </tr>
+    <tr>
+      <td class="pc">Noi</td>
+      <td class="pres"><b>diciamo</b> <span class="stem-note">irr</span></td>
+      <td class="prog">stiamo dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">abbiamo <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>evamo</b> <span class="end">-evamo</span><span class="stem-note">stem*</span></td>
+      <td class="pr">dic<b>emmo</b> <span class="end">-emmo</span><span class="stem-note">stem*</span></td>
+      <td class="fut">dir<b>emo</b> <span class="end">-emo</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>emmo</b> <span class="end">-emmo</span><span class="stem-note">stem*</span></td>
+      <td class="imper"><b>diciamo!</b> <span class="stem-note">irr</span></td>
+      <td class="refl">ci <b>diciamo</b></td>
+    </tr>
+    <tr>
+      <td class="pc">Voi</td>
+      <td class="pres"><b>dite</b> <span class="stem-note">irr</span></td>
+      <td class="prog">state dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">avete <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>evate</b> <span class="end">-evate</span><span class="stem-note">stem*</span></td>
+      <td class="pr">dic<b>este</b> <span class="end">-este</span><span class="stem-note">stem*</span></td>
+      <td class="fut">dir<b>ete</b> <span class="end">-ete</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>este</b> <span class="end">-este</span><span class="stem-note">stem*</span></td>
+      <td class="imper"><b>dite!</b> <span class="stem-note">irr</span></td>
+      <td class="refl">vi <b>dite</b></td>
+    </tr>
+    <tr>
+      <td class="pc">Loro</td>
+      <td class="pres"><b>dicono</b> <span class="stem-note">irr</span></td>
+      <td class="prog">stanno dic<b>endo</b> <span class="end">-endo</span><span class="stem-note">stem*</span></td>
+      <td class="pp">hanno <b>detto</b> <span class="stem-note">irr</span></td>
+      <td class="imperf">dic<b>evano</b> <span class="end">-evano</span><span class="stem-note">stem*</span></td>
+      <td class="pr"><b>dissero</b> <span class="stem-note">irr</span></td>
+      <td class="fut">dir<b>anno</b> <span class="end">-anno</span><span class="stem-note">stem*</span></td>
+      <td class="cond">dir<b>ebbero</b> <span class="end">-ebbero</span><span class="stem-note">stem*</span></td>
+      <td class="imper"><b>dicano!</b> <span class="stem-note">irr</span></td>
+      <td class="refl">si <b>dicono</b></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="note">📌 <strong>From Latin dicere</strong> (-ERE verb!) → Like <i>fare</i>, the Imperfetto uses -ERE endings (<b>-evo, -evi...</b>) on the hidden stem <b>dic-</b>. Futuro/Condizionale use the contracted stem <b>dir-</b>. Past participle: <b>detto</b> (irregular). Gerundio: <b>dicendo</b>. Passato Remoto has irregular doubled consonants: <b>dissi, disse, dissero</b> (Io/Lui/Loro).</div>
+
+<div class="scroll">
+<div class="similar-box">
+  <h3>🔍 Similar-Looking Forms in DIRE — How to Tell Them Apart</h3>
+  <table class="sim-table">
+    <thead><tr><th>Form</th><th>Appears in...</th><th>💡 How to differentiate</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="form-tag">dice</span> vs <span class="form-tag">dica</span></td>
+        <td><span class="tense-tag t-pres">Presente</span> Lui/Lei &nbsp; vs &nbsp; <span class="tense-tag t-imper">Imperativo</span> Lui/Lei (formal)</td>
+        <td class="tip">"Lui <b>dice</b> sempre la verità" = He always tells the truth (fact). "<b>Dica</b> pure!" = Go ahead and say it! (formal command). The <b>-a</b> ending replaces <b>-e</b> in the formal imperative.</td>
+      </tr>
+      <tr>
+        <td><span class="form-tag">diciamo</span></td>
+        <td><span class="tense-tag t-pres">Presente</span> Noi &nbsp; <span class="tense-tag t-imper">Imperativo</span> Noi</td>
+        <td class="tip">"Noi diciamo la nostra opinione" = We give our opinion (fact). "Diciamo la verità!" = Let's tell the truth! (suggestion). No subject pronoun + ! = imperative.</td>
+      </tr>
+      <tr>
+        <td><span class="form-tag">dite</span></td>
+        <td><span class="tense-tag t-pres">Presente</span> Voi &nbsp; <span class="tense-tag t-imper">Imperativo</span> Voi</td>
+        <td class="tip">"Voi dite cose interessanti" = You say interesting things (fact). "Dite qualcosa!" = Say something! (command to a group). Same rule — no subject + ! = imperative.</td>
+      </tr>
+      <tr>
+        <td><span class="form-tag">dirò</span> vs <span class="form-tag">direi</span></td>
+        <td><span class="tense-tag t-fut">Futuro</span> Io &nbsp; vs &nbsp; <span class="tense-tag t-cond">Condizionale</span> Io</td>
+        <td class="tip"><b>Dirò</b> = I WILL say (certain — "Glielo dirò domani"). <b>Direi</b> = I WOULD say ("Direi di sì" = I'd say yes). Both use <b>dir-</b>. The <b>ò</b> = future, the <b>-ei</b> = conditional.</td>
+      </tr>
+      <tr>
+        <td><span class="form-tag">dicevo</span> vs <span class="form-tag">dissi</span></td>
+        <td><span class="tense-tag t-imperf">Imperfetto</span> Io &nbsp; vs &nbsp; <span class="tense-tag t-imp">Pass. Remoto</span> Io</td>
+        <td class="tip"><b>Dicevo</b> = I used to say / was saying (ongoing/habitual). <b>Dissi</b> = I said (once, completed, long ago). The <b>-evo</b> signals continuous; the doubled <b>ss</b> in dissi signals passato remoto.</td>
+      </tr>
+      <tr>
+        <td><span class="form-tag">dico</span> vs <span class="form-tag">dicono</span></td>
+        <td><span class="tense-tag t-pres">Presente</span> Io &nbsp; vs &nbsp; <span class="tense-tag t-pres">Presente</span> Loro</td>
+        <td class="tip">Both use the <b>dic-</b> stem (Io and Loro share the same irregular stem — common Italian pattern!). "Io dico" = I say. "Loro dicono" = They say. The <b>-o</b> vs <b>-ono</b> ending tells you which.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+
+<!-- ===================== EXAMPLE SENTENCES ===================== -->
+<div class="examples-section">
+<h2 class="ire-title">📝 DIRE — Example Sentences by Tense</h2>
+<p style="text-align:center;font-size:0.8em;color:#aaa;margin-bottom:14px;">Two sentences per tense from different pronouns — study the context and structure!</p>
+
+<!-- Presente -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#1e4d20;">Presente</span> Presente</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Noi</span> <span class="ex-verb">Diciamo</span> sempre la verità anche quando è difficile da accettare.</div>
+    <div class="ex-en">We always tell the truth even when it's hard to accept.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Tu</span> Tu <span class="ex-verb">dici</span> che vuoi cambiare, ma non fai mai niente di diverso.</div>
+    <div class="ex-en">You say you want to change, but you never do anything different.</div>
+  </div>
+</div>
+
+<!-- Presente Continuo -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#103a47;">Pres. Continuo</span> Presente Continuo</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Io</span> <span class="ex-verb">Sto dicendo</span> a mia madre che non posso venire a cena stasera.</div>
+    <div class="ex-en">I'm telling my mother that I can't come to dinner tonight.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Loro</span> <span class="ex-verb">Stanno dicendo</span> a tutti che il concerto è stato cancellato per la pioggia.</div>
+    <div class="ex-en">They're telling everyone that the concert was cancelled because of the rain.</div>
+  </div>
+</div>
+
+<!-- Passato Prossimo -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#4a2e0a;">Pass. Prossimo</span> Passato Prossimo</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Lui</span> <span class="ex-verb">Ha detto</span> che avrebbe chiamato appena fosse arrivato a casa.</div>
+    <div class="ex-en">He said he would call as soon as he got home.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Voi</span> <span class="ex-verb">Avete detto</span> che il progetto sarebbe stato pronto entro venerdì.</div>
+    <div class="ex-en">You (all) said the project would be ready by Friday.</div>
+  </div>
+</div>
+
+<!-- Imperfetto -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#3a1a4a;">Imperfetto</span> Imperfetto</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Io</span> Da bambino, <span class="ex-verb">dicevo</span> sempre che volevo diventare un astronauta.</div>
+    <div class="ex-en">As a child, I always used to say I wanted to become an astronaut.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Lei</span> Mia nonna <span class="ex-verb">diceva</span> che la pazienza è la virtù dei forti.</div>
+    <div class="ex-en">My grandmother used to say that patience is the virtue of the strong.</div>
+  </div>
+</div>
+
+<!-- Passato Remoto -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#4a1010;">Pass. Remoto</span> Passato Remoto</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Lui</span> Il professore <span class="ex-verb">disse</span> qualcosa di importante, ma nessuno lo ascoltò.</div>
+    <div class="ex-en">The professor said something important, but nobody listened to him.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Loro</span> <span class="ex-verb">Dissero</span> che non sarebbero mai più tornati in quella città.</div>
+    <div class="ex-en">They said they would never return to that city again.</div>
+  </div>
+</div>
+
+<!-- Futuro -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#102a4a;">Futuro</span> Futuro</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Io</span> <span class="ex-verb">Dirò</span> a Marco di venire alla festa solo quando sarò sicuro della data.</div>
+    <div class="ex-en">I will tell Marco to come to the party only when I'm sure of the date.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Noi</span> <span class="ex-verb">Diremo</span> ai nostri genitori la notizia quando ci incontreremo a Natale.</div>
+    <div class="ex-en">We will tell our parents the news when we meet at Christmas.</div>
+  </div>
+</div>
+
+<!-- Condizionale -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#2e2e0a;">Condizionale</span> Condizionale</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Tu</span> <span class="ex-verb">Diresti</span> la stessa cosa se fossi al mio posto e avessi visto tutto?</div>
+    <div class="ex-en">Would you say the same thing if you were in my place and had seen everything?</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Io</span> <span class="ex-verb">Direi</span> che questo ristorante è il migliore che abbiamo provato finora.</div>
+    <div class="ex-en">I would say this restaurant is the best we've tried so far.</div>
+  </div>
+</div>
+
+<!-- Imperativo -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#4a1a1a;">Imperativo</span> Imperativo</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Tu</span> <span class="ex-verb">Di'</span> a tuo fratello di spegnere la televisione e venire a tavola!</div>
+    <div class="ex-en">Tell your brother to turn off the TV and come to the table!</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Voi</span> <span class="ex-verb">Dite</span> chiaramente quello che pensate invece di restare in silenzio!</div>
+    <div class="ex-en">Say clearly what you think instead of staying silent!</div>
+  </div>
+</div>
+
+<!-- Riflessivo (dirsi) -->
+<div class="ex-block">
+  <h3><span class="ex-tense-label" style="background:#0a3a2a;">Riflessivo</span> Riflessivo (dirsi)</h3>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Noi</span> <span class="ex-verb">Ci diciamo</span> sempre tutto, perché la fiducia è la base della nostra amicizia.</div>
+    <div class="ex-en">We always tell each other everything, because trust is the foundation of our friendship.</div>
+  </div>
+  <div class="ex-pair">
+    <div class="ex-it"><span class="ex-pronoun">Loro</span> <span class="ex-verb">Si dicono</span> innamorati, ma litigano ogni volta che si vedono.</div>
+    <div class="ex-en">They call themselves in love, but they fight every time they see each other.</div>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>
