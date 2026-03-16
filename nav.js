@@ -11,6 +11,7 @@
     { id: "foundations", label: "Foundations", root: "foundations/index.html" },
     { id: "sentences",  label: "Sentences",   root: "sentences/index.html" },
     { id: "fluency",    label: "Fluency",     root: "fluency/index.html" },
+    { id: "conversazione", label: "Conversazione", root: "conversazione/index.html" },
   ];
 
   // ── Phase topics (ordered by recommended study sequence) ─
