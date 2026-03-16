@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 3: Fluency — Italian Grammar</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <script src="../nav.js"></script>
+  <div id="app"></div>
+  <script>
+    var topics = [
+      {
+        step: 1,
+        name: "Expressions",
+        it: "Espressioni",
+        path: "../espressioni/index.html",
+        desc: "Everyday phrases, idioms, proverbs, restaurant language, slang, and situational expressions.",
+        why: "Expressions give you the biggest immediate impact on sounding natural. Even with perfect grammar, you need these to sound Italian."
+      },
+      {
+        step: 2,
+        name: "Numbers & Time",
+        it: "Numeri e Tempo",
+        path: "../numeri/index.html",
+        desc: "Cardinals, ordinals, telling time, days, months, dates, fractions, and approximate quantities.",
+        why: "You know basic numbers from A1, but dates, fractions, the -ina approximations, and time expressions are A2+ territory."
+      },
+      {
+        step: 3,
+        name: "Si Constructions",
+        it: "Costruzioni con Si",
+        path: "../si/index.html",
+        desc: "Si impersonale, si passivante \u2014 impersonal and passive constructions used constantly in Italian.",
+        why: "The hardest topic, saved for last. Italians use 'si' everywhere: si dice, si pu\u00f2, si mangia bene. Mastering this is the final step to B1."
+      }
+    ];
+
+    function render() {
+      var app = document.getElementById("app");
+      if (!app) return;
+      var h = "";
+
+      h += '<h1 class="home-title">Phase 3: Sound Natural</h1>';
+      h += '<p class="home-subtitle">The patterns that make you sound Italian, not just grammatically correct (A2 \u2192 B1)</p>';
+
+      h += '<div class="mood-section mood-condizionale" style="margin-top:16px">';
+      h += '<div class="mood-title blue">Study Guide</div>';
+      h += '<div class="tense-what" style="margin-bottom:0">';
+      h += "Grammar gets you understood. <b>This phase makes you sound natural.</b> ";
+      h += "Expressions and idioms are what native speakers actually say. Numbers and time cover practical daily situations. ";
+      h += "And 'si' constructions are perhaps the most characteristically Italian grammar pattern \u2014 ";
+      h += "once you master these, you\u2019re thinking in Italian, not translating from English.";
+      h += '</div></div>';
+
+      h += '<div class="verb-group">';
+      h += '<div class="group-title ire">Topics (in recommended order)</div>';
+      h += '<div class="group-desc">These topics bridge the gap from \u201ccorrect\u201d to \u201cfluent.\u201d</div>';
+      h += '<div class="verb-grid">';
+      for (var i = 0; i < topics.length; i++) {
+        var t = topics[i];
+        h += '<a class="verb-card" href="' + t.path + '">';
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+        h += '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#1e88e5;color:#fff;font-size:0.8em;font-weight:700;flex-shrink:0">' + t.step + '</span>';
+        h += '<span class="verb-name">' + t.name + '</span>';
+        h += '</div>';
+        h += '<div class="verb-meaning">' + t.it + '</div>';
+        h += '<div style="font-size:0.75em;color:#888;margin-top:4px">' + t.desc + '</div>';
+        h += '<div style="font-size:0.72em;color:#1565c0;margin-top:6px;font-style:italic">Why here: ' + t.why + '</div>';
+        h += '</a>';
+      }
+      h += '</div></div>';
+
+      app.innerHTML = h;
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>

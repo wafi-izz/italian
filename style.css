@@ -246,19 +246,27 @@ h1.verb-title {
    INDEX / HOME PAGE
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Unified navigation (nav.js) ── */
+/* ── Navigation wrapper (sticky container) ── */
+.nav-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin: -24px -20px 20px;
+}
+
+/* ── Main nav bar ── */
 .site-nav {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 16px;
-  margin-bottom: 20px;
-  padding: 12px 0 16px;
-  position: relative;
+  padding: 12px 20px;
+  background: #eef0f4;
+  border-bottom: 1px solid #ddd;
 }
 .nav-back {
   position: absolute;
-  left: 0;
+  left: 12px;
   color: #4a6fa5;
   text-decoration: none;
   font-size: 0.85em;
@@ -290,6 +298,59 @@ h1.verb-title {
   background: #1e88e5;
   color: white;
   border-color: #1e88e5;
+}
+
+/* ── Sub-nav (phase topic steps) ── */
+.sub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: #e4e7ec;
+  border-bottom: 1px solid #d4d7dc;
+  flex-wrap: wrap;
+}
+.sub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  font-size: 0.8em;
+  color: #666;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.sub-link:hover {
+  background: #fff;
+  color: #333;
+}
+.sub-link.active {
+  background: #fff;
+  color: #1e88e5;
+  font-weight: 700;
+}
+.sub-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c5cae9;
+  color: #333;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+.sub-link.active .sub-step {
+  background: #1e88e5;
+  color: #fff;
+}
+.sub-arrow {
+  color: #aaa;
+  font-size: 0.85em;
 }
 
 /* Legacy .nav-header (kept for compatibility) */

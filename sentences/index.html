@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 2: Sentences — Italian Grammar</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <script src="../nav.js"></script>
+  <div id="app"></div>
+  <script>
+    var topics = [
+      {
+        step: 1,
+        name: "Negation",
+        it: "Negazione",
+        path: "../negazione/index.html",
+        desc: "Non, niente, nessuno, mai, neanche \u2014 double negation rules and placement.",
+        why: "Negation is simple in concept but has Italian-specific traps (double negatives are correct!). Quick win to start this phase."
+      },
+      {
+        step: 2,
+        name: "Questions",
+        it: "Domande",
+        path: "../domande/index.html",
+        desc: "Chi, che, dove, quando, come, perch\u00e9, quanto \u2014 forming every type of question.",
+        why: "Being able to ask questions makes you an active conversationalist instead of just responding."
+      },
+      {
+        step: 3,
+        name: "Adverbs",
+        it: "Avverbi",
+        path: "../avverbi/index.html",
+        desc: "Formation (-mente), placement rules, and common adverbs of time, place, manner, quantity.",
+        why: "Adverbs add precision to your sentences. Placement is different from English \u2014 learn the rules now."
+      },
+      {
+        step: 4,
+        name: "Conjunctions",
+        it: "Congiunzioni",
+        path: "../congiunzioni/index.html",
+        desc: "Coordinating (e, ma, o) and subordinating (che, perch\u00e9, quando) \u2014 which trigger congiuntivo.",
+        why: "Conjunctions connect ideas and stop you from speaking in short, choppy sentences. They\u2019re the bridge to fluency."
+      }
+    ];
+
+    function render() {
+      var app = document.getElementById("app");
+      if (!app) return;
+      var h = "";
+
+      h += '<h1 class="home-title">Phase 2: Sentence Power</h1>';
+      h += '<p class="home-subtitle">Go from simple statements to real conversations (A2)</p>';
+
+      h += '<div class="mood-section mood-congiuntivo" style="margin-top:16px">';
+      h += '<div class="mood-title yellow">Study Guide</div>';
+      h += '<div class="tense-what" style="margin-bottom:0">';
+      h += "With the foundations solid, you can now <b>build complex sentences</b>. ";
+      h += "This phase teaches you to negate, question, modify, and connect \u2014 the four operations that turn ";
+      h += "basic statements into real communication. ";
+      h += "By the end, you\u2019ll be able to express nuanced ideas instead of just naming things.";
+      h += '</div></div>';
+
+      h += '<div class="verb-group">';
+      h += '<div class="group-title ere">Topics (in recommended order)</div>';
+      h += '<div class="group-desc">Each topic adds a new dimension to your sentence-building ability.</div>';
+      h += '<div class="verb-grid">';
+      for (var i = 0; i < topics.length; i++) {
+        var t = topics[i];
+        h += '<a class="verb-card" href="' + t.path + '">';
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+        h += '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#f9a825;color:#fff;font-size:0.8em;font-weight:700;flex-shrink:0">' + t.step + '</span>';
+        h += '<span class="verb-name">' + t.name + '</span>';
+        h += '</div>';
+        h += '<div class="verb-meaning">' + t.it + '</div>';
+        h += '<div style="font-size:0.75em;color:#888;margin-top:4px">' + t.desc + '</div>';
+        h += '<div style="font-size:0.72em;color:#e65100;margin-top:6px;font-style:italic">Why here: ' + t.why + '</div>';
+        h += '</a>';
+      }
+      h += '</div></div>';
+
+      app.innerHTML = h;
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>

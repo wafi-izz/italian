@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phase 1: Foundations — Italian Grammar</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <script src="../nav.js"></script>
+  <div id="app"></div>
+  <script>
+    var topics = [
+      {
+        step: 1,
+        name: "Articles",
+        it: "Articoli",
+        path: "../articoli/index.html",
+        desc: "Definite (il, lo, la), indefinite (un, uno, una), and partitive articles. Master contractions like del, nel, al.",
+        why: "Articles appear in almost every Italian sentence. Getting them right is the first step to sounding correct."
+      },
+      {
+        step: 2,
+        name: "Nouns",
+        it: "Sostantivi",
+        path: "../sostantivi/index.html",
+        desc: "Gender rules, plural formation, irregular plurals, invariable nouns, gender traps, and suffixes.",
+        why: "Every article, adjective, and pronoun must agree with the noun\u2019s gender and number. This is the foundation of agreement."
+      },
+      {
+        step: 3,
+        name: "Adjectives",
+        it: "Aggettivi",
+        path: "../aggettivi/index.html",
+        desc: "Agreement, position rules, comparatives, superlatives, possessives, and demonstratives.",
+        why: "Adjectives follow the same gender/number rules as nouns. Study them right after nouns while the patterns are fresh."
+      },
+      {
+        step: 4,
+        name: "Pronouns",
+        it: "Pronomi",
+        path: "../pronomi/index.html",
+        desc: "Subject, direct object, indirect object, reflexive, combined, and relative pronouns.",
+        why: "Pronouns replace nouns \u2014 you need to understand nouns and their gender first. Pronouns are the hardest part of this phase, so they come last."
+      }
+    ];
+
+    function render() {
+      var app = document.getElementById("app");
+      if (!app) return;
+      var h = "";
+
+      h += '<h1 class="home-title">Phase 1: Foundations</h1>';
+      h += '<p class="home-subtitle">Solidify the building blocks that every Italian sentence depends on (A1 \u2192 A2)</p>';
+
+      h += '<div class="mood-section mood-indicativo" style="margin-top:16px">';
+      h += '<div class="mood-title green">Study Guide</div>';
+      h += '<div class="tense-what" style="margin-bottom:0">';
+      h += "You\u2019ve passed A1 \u2014 you know basic patterns. Now it\u2019s time to <b>eliminate the gaps</b>. ";
+      h += "These four topics are the grammar that everything else builds on. ";
+      h += "Articles interact with nouns, nouns dictate adjective agreement, and pronouns replace nouns. ";
+      h += "Follow the order: each topic builds directly on the previous one.";
+      h += '</div></div>';
+
+      h += '<div class="verb-group">';
+      h += '<div class="group-title are">Topics (in recommended order)</div>';
+      h += '<div class="group-desc">Click any topic to study it. Follow the numbered order for the best learning path.</div>';
+      h += '<div class="verb-grid">';
+      for (var i = 0; i < topics.length; i++) {
+        var t = topics[i];
+        h += '<a class="verb-card" href="' + t.path + '">';
+        h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+        h += '<span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#43a047;color:#fff;font-size:0.8em;font-weight:700;flex-shrink:0">' + t.step + '</span>';
+        h += '<span class="verb-name">' + t.name + '</span>';
+        h += '</div>';
+        h += '<div class="verb-meaning">' + t.it + '</div>';
+        h += '<div style="font-size:0.75em;color:#888;margin-top:4px">' + t.desc + '</div>';
+        h += '<div style="font-size:0.72em;color:#43a047;margin-top:6px;font-style:italic">Why here: ' + t.why + '</div>';
+        h += '</a>';
+      }
+      h += '</div></div>';
+
+      app.innerHTML = h;
+    }
+
+    document.addEventListener("DOMContentLoaded", render);
+  </script>
+</body>
+</html>
