@@ -66,7 +66,13 @@
     currentFolder = folderMatch[1];
   }
 
-  if (hubFolders.indexOf(currentFolder) !== -1) {
+  // Check if currentFolder matches a section id directly (e.g. "conversazione")
+  var sectionIds = [];
+  for (var si = 0; si < sections.length; si++) sectionIds.push(sections[si].id);
+
+  if (sectionIds.indexOf(currentFolder) !== -1) {
+    activeId = currentFolder;
+  } else if (hubFolders.indexOf(currentFolder) !== -1) {
     activeId = currentFolder;
   } else if (folderToPhase[currentFolder]) {
     activeId = folderToPhase[currentFolder];

@@ -45,14 +45,24 @@
     "  font-weight:600; cursor:pointer; font-size:.85em; }",
     ".chat-input button:disabled { opacity:.5; }",
 
-    /* Selection tooltip */
-    ".sel-tip { position:absolute; background:#1e88e5; color:#fff; padding:5px 12px;" +
-    "  border-radius:6px; font-size:.82em; font-weight:600; cursor:pointer; z-index:10000;" +
-    "  box-shadow:0 3px 10px rgba(0,0,0,.2); white-space:nowrap; display:none;" +
-    "  font-family:'Segoe UI',system-ui,sans-serif; }",
-    ".sel-tip:hover { background:#1565c0; }",
-    ".sel-tip::after { content:''; position:absolute; top:100%; left:50%; margin-left:-5px;" +
+    /* Selection toolbar */
+    ".sel-bar { position:absolute; display:none; z-index:10000; font-family:'Segoe UI',system-ui,sans-serif;" +
+    "  background:#1e88e5; border-radius:8px; box-shadow:0 3px 10px rgba(0,0,0,.2);" +
+    "  overflow:hidden; white-space:nowrap; }",
+    ".sel-bar::after { content:''; position:absolute; top:100%; left:50%; margin-left:-5px;" +
     "  border:5px solid transparent; border-top-color:#1e88e5; }",
+    ".sel-btn { background:none; border:none; color:#fff; padding:6px 12px; font-size:.82em;" +
+    "  font-weight:600; cursor:pointer; font-family:inherit; }",
+    ".sel-btn:hover { background:rgba(255,255,255,.15); }",
+    ".sel-btn + .sel-btn { border-left:1px solid rgba(255,255,255,.25); }",
+
+    /* Inline translation result */
+    ".trans-tip { position:absolute; z-index:10001; background:#222; color:#fff; padding:8px 14px;" +
+    "  border-radius:8px; font-size:.84em; line-height:1.5; max-width:350px; word-wrap:break-word;" +
+    "  box-shadow:0 4px 14px rgba(0,0,0,.3); font-family:'Segoe UI',system-ui,sans-serif; display:none; }",
+    ".trans-tip::after { content:''; position:absolute; top:100%; left:50%; margin-left:-5px;" +
+    "  border:5px solid transparent; border-top-color:#222; }",
+    ".trans-tip.loading { color:#aaa; font-style:italic; }",
   ].join("\n");
   document.head.appendChild(style);
 
@@ -173,18 +183,27 @@
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); }
   });
 
-  // ── Selection tooltip: "Ask AI" ─────────────────────────
-  var tip = document.createElement("div");
-  tip.className = "sel-tip";
-  tip.textContent = "Ask AI";
-  document.body.appendChild(tip);
+  // ── Selection toolbar: Translate | Ask AI ───────────────
+  var selBar = document.createElement("div");
+  selBar.className = "sel-bar";
+  selBar.innerHTML = '<button class="sel-btn" id="sel-translate">Translate</button>' +
+                     '<button class="sel-btn" id="sel-ask">Ask AI</button>';
+  document.body.appendChild(selBar);
+
+  var transTip = document.createElement("div");
+  transTip.className = "trans-tip";
+  document.body.appendChild(transTip);
 
   var selectedText = "";
+  var selRect = null;
+
+  function hideSelBar() { selBar.style.display = "none"; }
+  function hideTransTip() { transTip.style.display = "none"; transTip.classList.remove("loading"); }
 
   document.addEventListener("mouseup", function (e) {
-    // Ignore clicks inside the chat panel or tooltip itself
-    if (panel.contains(e.target) || tip.contains(e.target)) return;
+    if (panel.contains(e.target) || selBar.contains(e.target) || transTip.contains(e.target)) return;
 
+    hideTransTip();
     var sel = window.getSelection();
     var text = sel ? sel.toString().trim() : "";
 
@@ -192,31 +211,87 @@
       selectedText = text;
       var range = sel.getRangeAt(0);
       var rect = range.getBoundingClientRect();
-      tip.style.left = (rect.left + rect.width / 2 - 35 + window.scrollX) + "px";
-      tip.style.top = (rect.top - 36 + window.scrollY) + "px";
-      tip.style.display = "block";
+      selRect = rect;
+      selBar.style.left = (rect.left + rect.width / 2 - selBar.offsetWidth / 2 + window.scrollX) + "px";
+      selBar.style.top = (rect.top - 38 + window.scrollY) + "px";
+      selBar.style.display = "block";
+      // Recenter after rendering (offsetWidth now accurate)
+      selBar.style.left = (rect.left + rect.width / 2 - selBar.offsetWidth / 2 + window.scrollX) + "px";
     } else {
-      tip.style.display = "none";
+      hideSelBar();
       selectedText = "";
     }
   });
 
-  // Hide tooltip on scroll or click elsewhere
   document.addEventListener("mousedown", function (e) {
-    if (!tip.contains(e.target)) {
-      tip.style.display = "none";
+    if (!selBar.contains(e.target) && !transTip.contains(e.target)) {
+      hideSelBar();
+      hideTransTip();
     }
   });
 
-  // When tooltip clicked: send selection to AI for quick explanation
-  tip.addEventListener("click", async function () {
-    tip.style.display = "none";
+  // ── Translate button: inline result ────────────────────
+  selBar.querySelector("#sel-translate").addEventListener("click", async function () {
+    hideSelBar();
     if (!selectedText) return;
 
     var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
     if (!key) { alert("Missing env.js — API key not found"); return; }
 
-    // Open panel and show the question
+    // Show loading state inline
+    transTip.textContent = "Translating...";
+    transTip.classList.add("loading");
+    transTip.style.display = "block";
+    if (selRect) {
+      transTip.style.left = (selRect.left + selRect.width / 2 - 100 + window.scrollX) + "px";
+      transTip.style.top = (selRect.top - 50 + window.scrollY) + "px";
+    }
+
+    try {
+      var res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": key,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true"
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 200,
+          system: "Translate the given text. If Italian, translate to English. If English, translate to Italian. " +
+            "Return ONLY the translation, nothing else. No quotes, no explanation, no labels.",
+          messages: [{ role: "user", content: selectedText }]
+        })
+      });
+
+      var data = await res.json();
+      if (data.error) {
+        transTip.textContent = "Error: " + (data.error.message || "API error");
+      } else {
+        transTip.textContent = data.content[0].text;
+      }
+      transTip.classList.remove("loading");
+      // Reposition after content changes size
+      if (selRect) {
+        transTip.style.left = (selRect.left + selRect.width / 2 - transTip.offsetWidth / 2 + window.scrollX) + "px";
+        transTip.style.top = (selRect.top - transTip.offsetHeight - 10 + window.scrollY) + "px";
+      }
+    } catch (e) {
+      transTip.textContent = "Error: " + e.message;
+      transTip.classList.remove("loading");
+    }
+  });
+
+  // ── Ask AI button: full chat panel ─────────────────────
+  selBar.querySelector("#sel-ask").addEventListener("click", async function () {
+    hideSelBar();
+    hideTransTip();
+    if (!selectedText) return;
+
+    var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
+    if (!key) { alert("Missing env.js — API key not found"); return; }
+
     panel.classList.add("open");
     var question = 'Translate & explain: "' + selectedText + '"';
     addBubble("user", question);

@@ -19,7 +19,11 @@
       "Bash(node _test_parse.js)",
       "Bash(node _test_parse2.js)",
       "Bash(node generate-verb.js andare \"to go\" --dry-run)",
-      "Bash(ls -d c:/ProgramData/Wafi/Italian/*/data.js)"
+      "Bash(ls -d c:/ProgramData/Wafi/Italian/*/data.js)",
+      "Bash(grep -v \"^\\\\.$\")",
+      "Bash(for verb:*)",
+      "Read(//d/WS/italian/**)",
+      "Bash(xargs -I {} basename {})"
     ]
   }
 }
