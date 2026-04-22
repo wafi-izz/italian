@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Italian Verb Conjugation</title>
+  <style>
+/* ═══════════════════════════════════════════════════════════
+   Italian Verb Conjugation — Light Theme with White Steps
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Base ── */
+* { box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #eef0f4;
+  color: #1a1a1a;
+  padding: 24px 20px;
+  margin: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* ── Verb Page Header ── */
+h1.verb-title {
+  text-align: center;
+  color: #1a1a1a;
+  font-size: 1.6em;
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+.header-sub {
+  text-align: center;
+  font-size: 0.84em;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+.header-sub b { color: #333; }
+
+/* ── Back link ── */
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #4a6fa5;
+  text-decoration: none;
+  font-size: 0.88em;
+  font-weight: 500;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════
+   Step 1 — Mood Sections (pure white)
+   ═══════════════════════════════════════ */
+.mood-section {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin: 20px 0;
+  border-left: 5px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.mood-indicativo   { border-left-color: #43a047; }
+.mood-congiuntivo  { border-left-color: #f9a825; }
+.mood-condizionale { border-left-color: #1e88e5; }
+.mood-imperativo   { border-left-color: #e53935; }
+.mood-other        { border-left-color: #90a4ae; }
+
+.mood-title {
+  font-size: 1.15em;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.mood-title.green  { color: #2e7d32; }
+.mood-title.yellow { color: #e65100; }
+.mood-title.blue   { color: #1565c0; }
+.mood-title.red    { color: #c62828; }
+.mood-title.gray   { color: #546e7a; }
+
+.mood-desc {
+  font-size: 0.82em;
+  color: #777;
+  margin-bottom: 18px;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════
+   Step 2 — Tense Blocks (off-white)
+   ═══════════════════════════════════════ */
+.tense-block {
+  background: #f5f7fa;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.tense-block:last-child { margin-bottom: 0; }
+
+.tense-name {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 4px;
+}
+.tense-what {
+  font-size: 0.82em;
+  color: #555;
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+.tense-what b { color: #1a1a1a; }
+
+/* ═══════════════════════════════════════
+   Step 3 — Conjugation Tables (white)
+   ═══════════════════════════════════════ */
+.scroll { overflow-x: auto; margin-bottom: 10px; }
+
+.conj-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.84em;
+  min-width: 400px;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.conj-table th {
+  background: #e8eaef;
+  color: #333;
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+.conj-table td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #e8e8e8;
+}
+.conj-table tr:nth-child(even) td { background: #fafbfd; }
+.conj-table .pc {
+  background: #e8eaef;
+  color: #333;
+  font-weight: 600;
+  text-align: left;
+  min-width: 70px;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════
+   Step 4 — Examples (lightest tint)
+   ═══════════════════════════════════════ */
+.examples { margin-top: 12px; }
+.ex-pair {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  background: #f9fafc;
+  border-radius: 8px;
+  border-left: 3px solid #c5cae9;
+}
+.ex-pair:last-child { margin-bottom: 0; }
+.ex-it {
+  font-size: 0.88em;
+  font-style: italic;
+  color: #222;
+  margin-bottom: 4px;
+  line-height: 1.55;
+}
+.ex-en {
+  font-size: 0.78em;
+  color: #888;
+  line-height: 1.4;
+}
+.ex-pronoun {
+  display: inline-block;
+  background: #e0e3ea;
+  color: #333;
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-size: 0.8em;
+  font-weight: 600;
+  margin-right: 5px;
+  font-style: normal;
+}
+.ex-verb {
+  font-weight: 700;
+  color: #2e7d32;
+  font-style: normal;
+}
+.ex-use {
+  font-size: 0.8em;
+  color: #1565c0;
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ── Notes ── */
+.note {
+  background: #fffde7;
+  border-left: 4px solid #f9a825;
+  padding: 10px 14px;
+  margin: 10px 0;
+  font-size: 0.8em;
+  border-radius: 6px;
+  line-height: 1.55;
+  color: #555;
+}
+.note b { color: #333; }
+
+/* ═══════════════════════════════════════
+   Quick Reference Map
+   ═══════════════════════════════════════ */
+.ref-map {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.82em;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ref-map th {
+  background: #e8eaef;
+  color: #333;
+  padding: 8px 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+  font-weight: 600;
+}
+.ref-map td {
+  padding: 8px 12px;
+  border: 1px solid #e8e8e8;
+}
+.ref-map tr:nth-child(even) td { background: #fafbfd; }
+.ref-map .tense-col { font-weight: 600; color: #1a1a1a; }
+.ref-map .idea-col { color: #666; }
+
+/* ── Footer ── */
+.footer-note {
+  text-align: center;
+  font-size: 0.82em;
+  color: #999;
+  margin-top: 30px;
+  padding: 16px;
+  border-top: 1px solid #ddd;
+}
+.footer-note b { color: #555; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   INDEX / HOME PAGE
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Navigation wrapper (sticky container) ── */
+.nav-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin: -24px -20px 20px;
+}
+
+/* ── Main nav bar ── */
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #eef0f4;
+  border-bottom: 1px solid #ddd;
+}
+.nav-back {
+  position: absolute;
+  left: 12px;
+  color: #4a6fa5;
+  text-decoration: none;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+.nav-back:hover { text-decoration: underline; }
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+.nav-link {
+  display: inline-block;
+  padding: 7px 18px;
+  background: #ffffff;
+  color: #666;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88em;
+  border: 1px solid #e8e8e8;
+  transition: all 0.15s;
+}
+.nav-link:hover {
+  background: #f5f7fa;
+  color: #333;
+}
+.nav-link.active {
+  background: #1e88e5;
+  color: white;
+  border-color: #1e88e5;
+}
+
+/* ── Sub-nav (phase topic steps) ── */
+.sub-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: #e4e7ec;
+  border-bottom: 1px solid #d4d7dc;
+  flex-wrap: wrap;
+}
+.sub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  font-size: 0.8em;
+  color: #666;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.sub-link:hover {
+  background: #fff;
+  color: #333;
+}
+.sub-link.active {
+  background: #fff;
+  color: #1e88e5;
+  font-weight: 700;
+}
+.sub-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #c5cae9;
+  color: #333;
+  font-size: 0.75em;
+  font-weight: 700;
+}
+.sub-link.active .sub-step {
+  background: #1e88e5;
+  color: #fff;
+}
+.sub-arrow {
+  color: #aaa;
+  font-size: 0.85em;
+}
+
+/* Legacy .nav-header (kept for compatibility) */
+.nav-header {
+  display: none;
+}
+
+h1.home-title {
+  text-align: center;
+  font-size: 1.8em;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+.home-subtitle {
+  text-align: center;
+  font-size: 0.9em;
+  color: #888;
+  margin-bottom: 32px;
+}
+
+/* Group sections */
+.verb-group {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.group-title {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.group-title.ire  { color: #1565c0; }
+.group-title.are  { color: #c62828; }
+.group-title.ere  { color: #2e7d32; }
+.group-desc {
+  font-size: 0.8em;
+  color: #888;
+  margin-bottom: 14px;
+}
+
+/* Verb cards */
+.verb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.verb-card {
+  display: block;
+  background: #f5f7fa;
+  border-radius: 10px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s, box-shadow 0.15s;
+  border: 1px solid #e8e8e8;
+}
+.verb-card:hover {
+  background: #eef1f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.verb-card .verb-name {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+}
+.verb-card .verb-meaning {
+  font-size: 0.82em;
+  color: #888;
+  margin-bottom: 6px;
+}
+.verb-card .verb-tag {
+  display: inline-block;
+  font-size: 0.7em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.verb-tag.regular   { background: #e8f5e9; color: #2e7d32; }
+.verb-tag.irregular { background: #fff3e0; color: #e65100; }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: #aaa;
+  padding: 40px;
+  font-size: 0.9em;
+}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+// ── Nav (inline, simplified for standalone page) ──
+(function () {
+  var h = '<div class="nav-wrapper">';
+  h += '<nav class="site-nav">';
+  h += '<div class="nav-links">';
+  h += '<a class="nav-link active" href="#">Verbs</a>';
+  h += '</div></nav>';
+  h += '</div>';
+  var wrapper = document.createElement("div");
+  wrapper.innerHTML = h;
+  var navWrapper = wrapper.firstChild;
+  document.body.insertBefore(navWrapper, document.body.firstChild);
+})();
+
+// ── Verb registry (from dist.js) ──
+var verbs = [
+  { name: "stare",    meaning: "to stay / to be / to feel", type: "are", regular: false, path: "stare/index.html" },
+  { name: "fare",     meaning: "to do / to make",           type: "are", regular: false, path: "fare/index.html" },
+  { name: "andare",   meaning: "to go",                     type: "are", regular: false, path: "andare/index.html" },
+  { name: "parlare",  meaning: "to speak / to talk",        type: "are", regular: true,  path: "parlare/index.html" },
+  { name: "mangiare", meaning: "to eat",                    type: "are", regular: true,  path: "mangiare/index.html" },
+  { name: "essere",   meaning: "to be",                     type: "ere", regular: false, path: "essere/index.html" },
+  { name: "avere",    meaning: "to have",                   type: "ere", regular: false, path: "avere/index.html" },
+  { name: "dovere",   meaning: "to must / to have to",      type: "ere", regular: false, path: "dovere/index.html" },
+  { name: "potere",   meaning: "to be able to / can",       type: "ere", regular: false, path: "potere/index.html" },
+  { name: "volere",   meaning: "to want",                   type: "ere", regular: false, path: "volere/index.html" },
+  { name: "sapere",   meaning: "to know",                   type: "ere", regular: false, path: "sapere/index.html" },
+  { name: "dormire",  meaning: "to sleep",                  type: "ire", regular: true,  path: "dormire/index.html" },
+  { name: "dire",     meaning: "to say / to tell",          type: "ire", regular: false, path: "dire/index.html" },
+  { name: "venire",   meaning: "to come",                   type: "ire", regular: false, path: "venire/index.html" },
+];
+
+var groupConfig = {
+  are: { label: '-ARE Verbs',  emoji: '\uD83D\uDD34', color: 'are',  desc: 'First conjugation \u2014 the largest group. e.g. parlare, mangiare, amare...' },
+  ere: { label: '-ERE Verbs',  emoji: '\uD83D\uDFE2', color: 'ere',  desc: 'Second conjugation \u2014 many irregulars. e.g. vendere, leggere, scrivere...' },
+  ire: { label: '-IRE Verbs',  emoji: '\uD83D\uDD35', color: 'ire',  desc: 'Third conjugation \u2014 includes -isc- verbs. e.g. dormire, finire, capire...' },
+};
+
+function renderIndex() {
+  var app = document.getElementById('app');
+  if (!app) return;
+
+  var h = '';
+  h += '<h1 class="home-title">\uD83C\uDDEE\uD83C\uDDF9 Italian Verb Conjugation</h1>';
+  h += '<p class="home-subtitle">Complete conjugation tables with examples \u2014 select a verb to study</p>';
+
+  var groups = {};
+  for (var i = 0; i < verbs.length; i++) {
+    var v = verbs[i];
+    if (!groups[v.type]) groups[v.type] = [];
+    groups[v.type].push(v);
+  }
+
+  var order = ['are', 'ere', 'ire'];
+  for (var o = 0; o < order.length; o++) {
+    var type = order[o];
+    var cfg = groupConfig[type];
+    var list = groups[type] || [];
+
+    h += '<div class="verb-group">';
+    h += '<div class="group-title ' + cfg.color + '">' + cfg.emoji + ' ' + cfg.label + '</div>';
+    h += '<div class="group-desc">' + cfg.desc + '</div>';
+
+    if (list.length === 0) {
+      h += '<div class="empty-state">No verbs added yet</div>';
+    } else {
+      h += '<div class="verb-grid">';
+      for (var j = 0; j < list.length; j++) {
+        var vb = list[j];
+        var tag = vb.regular
+          ? '<span class="verb-tag regular">Regular</span>'
+          : '<span class="verb-tag irregular">Irregular</span>';
+        // Links won't work from file:// to subfolders, so disable them
+        h += '<div class="verb-card">';
+        h += '<div class="verb-name">' + vb.name + '</div>';
+        h += '<div class="verb-meaning">' + vb.meaning + '</div>';
+        h += tag;
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    h += '</div>';
+  }
+
+  app.innerHTML = h;
+}
+
+document.addEventListener('DOMContentLoaded', renderIndex);
+  </script>
+</body>
+</html>

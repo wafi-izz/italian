@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html><body><script>
+var p = new URLSearchParams(location.search);
+var v = p.get("v");
+if (v) {
+  var s = document.createElement("script");
+  s.src = v + "/data.js";
+  s.onload = function () { parent.postMessage({ v: v, d: verbData }, "*"); };
+  s.onerror = function () { parent.postMessage({ v: v, err: "Failed to load " + v + "/data.js" }, "*"); };
+  document.body.appendChild(s);
+}
+</script></body></html>

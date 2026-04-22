@@ -186,7 +186,8 @@
   // ── Selection toolbar: Translate | Ask AI ───────────────
   var selBar = document.createElement("div");
   selBar.className = "sel-bar";
-  selBar.innerHTML = '<button class="sel-btn" id="sel-translate">Translate</button>' +
+  selBar.innerHTML = '<button class="sel-btn" id="sel-speak">&#x1F50A; Play</button>' +
+                     '<button class="sel-btn" id="sel-translate">Translate</button>' +
                      '<button class="sel-btn" id="sel-ask">Ask AI</button>';
   document.body.appendChild(selBar);
 
@@ -228,6 +229,17 @@
       hideSelBar();
       hideTransTip();
     }
+  });
+
+  // ── Speak button: text-to-speech ───────────────────────
+  selBar.querySelector("#sel-speak").addEventListener("click", function () {
+    hideSelBar();
+    if (!selectedText) return;
+    window.speechSynthesis.cancel();
+    var utter = new SpeechSynthesisUtterance(selectedText);
+    utter.lang = "it-IT";
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
   });
 
   // ── Translate button: inline result ────────────────────

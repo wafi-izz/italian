@@ -23,7 +23,8 @@
       "Bash(grep -v \"^\\\\.$\")",
       "Bash(for verb:*)",
       "Read(//d/WS/italian/**)",
-      "Bash(xargs -I {} basename {})"
+      "Bash(xargs -I {} basename {})",
+      "Bash(node *)"
     ]
   }
 }

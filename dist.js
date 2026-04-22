@@ -77,6 +77,12 @@ function renderIndex() {
     h += '</div>';
   }
 
+  // Drill link
+  h += '<div style="text-align:center;margin:24px 0 8px">';
+  h += '<a href="drill.html" style="display:inline-block;padding:12px 32px;background:#1e88e5;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95em;box-shadow:0 2px 8px rgba(30,136,229,0.3)">Conjugation Drill</a>';
+  h += '<div style="font-size:0.78em;color:#999;margin-top:6px">Type conjugations from memory</div>';
+  h += '</div>';
+
   app.innerHTML = h;
 }
 

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Articles Test — Italian Grammar</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .test-header { text-align: center; margin-bottom: 20px; }
+    .test-header h1 { font-size: 1.5em; margin: 0 0 4px; color: #1a1a1a; }
+    .test-header p { font-size: 0.85em; color: #888; margin: 0; }
+
+    /* Progress bar */
+    .test-progress { background: #e0e0e0; border-radius: 10px; height: 10px; margin-bottom: 6px; overflow: hidden; }
+    .test-progress-fill { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+    .test-progress-fill.mix { background: linear-gradient(90deg, #43a047 var(--g), #e53935 var(--g)); }
+    .test-progress-stats { display: flex; justify-content: space-between; font-size: 0.78em; color: #888; margin-bottom: 18px; }
+    .stat-correct { color: #2e7d32; font-weight: 600; }
+    .stat-wrong { color: #c62828; font-weight: 600; }
+
+    /* Section header in map */
+    .map-section { margin-bottom: 20px; }
+    .map-section-head { padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .map-section-head h3 { margin: 0; font-size: 0.95em; }
+    .map-section-head .sec-score { font-size: 0.8em; font-weight: 600; }
+    .map-section-head.green { background: #e8f5e9; color: #2e7d32; }
+    .map-section-head.yellow { background: #fff8e1; color: #e65100; }
+    .map-section-head.blue { background: #e3f2fd; color: #1565c0; }
+    .map-section-head.red { background: #fbe9e7; color: #c62828; }
+    .map-section-head.gray { background: #eceff1; color: #546e7a; }
+    .map-section-head.purple { background: #f3e5f5; color: #6a1b9a; }
+
+    /* Question cards grid */
+    .q-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    .q-card { background: #fff; border: 2px solid #e0e0e0; border-radius: 10px; padding: 12px 14px;
+      cursor: pointer; transition: all 0.15s; position: relative; min-height: 72px;
+      display: flex; flex-direction: column; justify-content: space-between; }
+    .q-card:hover { border-color: #1e88e5; box-shadow: 0 2px 8px rgba(30,136,229,0.15); transform: translateY(-1px); }
+    .q-card .q-num { font-size: 0.7em; font-weight: 700; color: #aaa; margin-bottom: 4px; }
+    .q-card .q-preview { font-size: 0.82em; color: #555; font-weight: 500; line-height: 1.35;
+      overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .q-card .q-answer-tag { font-size: 0.7em; font-weight: 700; margin-top: 6px; }
+
+    /* Card states */
+    .q-card.correct { border-color: #43a047; background: #f1f8e9; }
+    .q-card.correct .q-num { color: #2e7d32; }
+    .q-card.correct .q-answer-tag { color: #2e7d32; }
+    .q-card.wrong { border-color: #e53935; background: #fef0ef; }
+    .q-card.wrong .q-num { color: #c62828; }
+    .q-card.wrong .q-answer-tag { color: #c62828; }
+    .q-card.unanswered { border-color: #e0e0e0; }
+
+    /* Question view */
+    .q-view { display: none; }
+    .q-view.show { display: block; }
+    .test-card { background: #fff; border-radius: 12px; padding: 22px 24px; margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-left: 4px solid #1e88e5; }
+    .test-prompt { font-size: 1.15em; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+    .test-prompt .gap { display: inline-block; min-width: 60px; border-bottom: 2px solid #1e88e5;
+      text-align: center; margin: 0 2px; color: #1e88e5; font-weight: 700; }
+    .test-hint { font-size: 0.82em; color: #999; margin-bottom: 16px; font-style: italic; }
+    .test-q-label { font-size: 0.78em; color: #888; margin-bottom: 12px; }
+
+    /* Options */
+    .test-options { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .test-option { padding: 10px 20px; border: 2px solid #ddd; border-radius: 8px; background: #fafafa;
+      font-size: 0.95em; font-weight: 600; cursor: pointer; transition: all 0.15s;
+      min-width: 80px; text-align: center; color: #333; }
+    .test-option:hover:not(.disabled) { border-color: #1e88e5; background: #e3f2fd; }
+    .test-option.correct { border-color: #43a047; background: #e8f5e9; color: #2e7d32; }
+    .test-option.wrong { border-color: #e53935; background: #ffebee; color: #c62828; text-decoration: line-through; }
+    .test-option.disabled { cursor: default; opacity: 0.7; }
+    .test-option.disabled:hover { border-color: #ddd; background: #fafafa; }
+    .test-option.was-correct { border-color: #43a047; background: #e8f5e9; color: #2e7d32; }
+    .test-option.was-wrong { border-color: #e53935; background: #ffebee; color: #c62828; text-decoration: line-through; }
+
+    /* Feedback */
+    .test-feedback { display: none; margin-top: 12px; padding: 12px 16px; border-radius: 8px;
+      font-size: 0.85em; line-height: 1.55; }
+    .test-feedback.show { display: block; }
+    .test-feedback.correct { background: #e8f5e9; border-left: 4px solid #43a047; color: #1b5e20; }
+    .test-feedback.wrong { background: #fbe9e7; border-left: 4px solid #e53935; color: #b71c1c; }
+
+    /* Navigation buttons */
+    .q-nav { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .q-nav button { padding: 10px 22px; border: none; border-radius: 8px; font-size: 0.88em;
+      font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .btn-map { background: #e3f2fd; color: #1565c0; }
+    .btn-map:hover { background: #bbdefb; }
+    .btn-next { background: #1e88e5; color: #fff; }
+    .btn-next:hover { background: #1565c0; }
+    .btn-prev { background: #f5f5f5; color: #666; }
+    .btn-prev:hover { background: #e0e0e0; }
+
+    /* Summary banner */
+    .summary-banner { padding: 18px 22px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+    .summary-banner.great { background: #e8f5e9; border: 2px solid #43a047; }
+    .summary-banner.good { background: #fff8e1; border: 2px solid #f9a825; }
+    .summary-banner.needs-work { background: #fbe9e7; border: 2px solid #e53935; }
+    .summary-banner .sb-score { font-size: 2em; font-weight: 700; }
+    .summary-banner.great .sb-score { color: #2e7d32; }
+    .summary-banner.good .sb-score { color: #f57c00; }
+    .summary-banner.needs-work .sb-score { color: #c62828; }
+    .summary-banner .sb-label { font-size: 0.88em; color: #666; }
+
+    /* AI Explain */
+    .ai-explain-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px;
+      background: #f3e5f5; color: #6a1b9a; border: 2px solid #ce93d8; border-radius: 8px;
+      font-size: 0.85em; font-weight: 600; cursor: pointer; transition: all 0.15s; margin-top: 12px; }
+    .ai-explain-btn:hover { background: #e1bee7; border-color: #ab47bc; }
+    .ai-explain-btn:disabled { opacity: 0.6; cursor: default; }
+    .ai-explain-btn .ai-icon { font-size: 1.1em; }
+    .ai-box { margin-top: 14px; padding: 16px 20px; background: #faf5ff; border: 1px solid #e1bee7;
+      border-radius: 10px; font-size: 0.88em; line-height: 1.65; color: #333; }
+    .ai-box.loading { color: #999; font-style: italic; }
+    .ai-box h3 { margin: 0 0 8px; font-size: 1em; color: #6a1b9a; }
+    .ai-box p { margin: 6px 0; }
+    .ai-box b, .ai-box strong { color: #4a148c; }
+    .ai-box ul { margin: 6px 0 6px 18px; padding: 0; }
+    .ai-box li { margin-bottom: 4px; }
+    .ai-box .ai-rule { background: #ede7f6; padding: 8px 12px; border-radius: 6px; margin: 8px 0;
+      border-left: 3px solid #7e57c2; }
+    .ai-box .ai-wrong-reason { background: #fce4ec; padding: 8px 12px; border-radius: 6px; margin: 8px 0;
+      border-left: 3px solid #e53935; }
+    .ai-box .ai-correct-reason { background: #e8f5e9; padding: 8px 12px; border-radius: 6px; margin: 8px 0;
+      border-left: 3px solid #43a047; }
+
+    /* Map actions */
+    .map-actions { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+    .map-actions a, .map-actions button { padding: 10px 24px; border-radius: 8px;
+      font-size: 0.88em; font-weight: 600; text-decoration: none; cursor: pointer; border: none; }
+    .btn-review { background: #e3f2fd; color: #1565c0; }
+    .btn-review:hover { background: #bbdefb; }
+    .btn-reset { background: #fbe9e7; color: #c62828; }
+    .btn-reset:hover { background: #ffcdd2; }
+    .btn-next-unanswered { background: #1e88e5; color: #fff; }
+    .btn-next-unanswered:hover { background: #1565c0; }
+  </style>
+</head>
+<body>
+  <script src="../env.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../chat.js"></script>
+
+  <div id="test-app"></div>
+
+  <script>
+  (function () {
+    // ══════════════════════════════════════════════════════════════
+    //  TEST DATA
+    // ══════════════════════════════════════════════════════════════
+
+    var testData = {
+      title: "Italian Articles",
+      topic: "articoli",
+      topicLabel: "Articles",
+      sections: [
+        {
+          name: "Gender Recognition",
+          desc: "Is the noun masculine (maschile) or feminine (femminile)? Watch out for traps!",
+          color: "green",
+          questions: [
+            { prompt: "problema", hint: "(the problem)", options: ["Maschile", "Femminile"], correct: 0,
+              explain: "Despite ending in -a, <b>problema</b> is masculine (Greek origin). il problema, i problemi." },
+            { prompt: "notte", hint: "(the night)", options: ["Maschile", "Femminile"], correct: 1,
+              explain: "<b>Notte</b> is feminine even though it ends in -e. la notte, le notti." },
+            { prompt: "sistema", hint: "(the system)", options: ["Maschile", "Femminile"], correct: 0,
+              explain: "<b>Sistema</b> is masculine (Greek origin: -ma ending). il sistema, i sistemi." },
+            { prompt: "canzone", hint: "(the song)", options: ["Maschile", "Femminile"], correct: 1,
+              explain: "<b>Canzone</b> is feminine. la canzone, le canzoni. Most nouns ending in -zione are feminine." },
+            { prompt: "nome", hint: "(the name)", options: ["Maschile", "Femminile"], correct: 0,
+              explain: "<b>Nome</b> is masculine. il nome, i nomi. Not all -e endings are feminine!" },
+            { prompt: "mano", hint: "(the hand)", options: ["Maschile", "Femminile"], correct: 1,
+              explain: "<b>Mano</b> is feminine despite ending in -o! la mano, le mani. One of the rare exceptions." },
+            { prompt: "programma", hint: "(the program)", options: ["Maschile", "Femminile"], correct: 0,
+              explain: "<b>Programma</b> is masculine (Greek -ma ending). il programma, i programmi." },
+            { prompt: "chiave", hint: "(the key)", options: ["Maschile", "Femminile"], correct: 1,
+              explain: "<b>Chiave</b> is feminine. la chiave, le chiavi." },
+          ]
+        },
+        {
+          name: "Definite Articles — Singular",
+          desc: "Pick the correct definite article: il, lo, la, or l'.",
+          color: "blue",
+          questions: [
+            { prompt: "___ libro", hint: "(the book)", options: ["il", "lo", "la", "l'"], correct: 0,
+              explain: "<b>Libro</b> is masculine, starts with a normal consonant. il libro." },
+            { prompt: "___ zaino", hint: "(the backpack)", options: ["il", "lo", "la", "l'"], correct: 1,
+              explain: "<b>Zaino</b> starts with z (complex sound). lo zaino." },
+            { prompt: "___ amica", hint: "(the female friend)", options: ["il", "lo", "la", "l'"], correct: 3,
+              explain: "<b>Amica</b> is feminine and starts with a vowel. la contracts to l' before vowels. l'amica." },
+            { prompt: "___ studente", hint: "(the student)", options: ["il", "lo", "la", "l'"], correct: 1,
+              explain: "<b>Studente</b> starts with s + consonant (st-). This is a complex sound. lo studente." },
+            { prompt: "___ amico", hint: "(the male friend)", options: ["il", "lo", "la", "l'"], correct: 3,
+              explain: "<b>Amico</b> is masculine and starts with a vowel. il/lo contract to l' before vowels. l'amico." },
+            { prompt: "___ psicologo", hint: "(the psychologist)", options: ["il", "lo", "la", "l'"], correct: 1,
+              explain: "<b>Psicologo</b> starts with ps (complex sound). lo psicologo." },
+            { prompt: "___ ragazza", hint: "(the girl)", options: ["il", "lo", "la", "l'"], correct: 2,
+              explain: "<b>Ragazza</b> is feminine, starts with a normal consonant. la ragazza." },
+            { prompt: "___ gnomo", hint: "(the gnome)", options: ["il", "lo", "la", "l'"], correct: 1,
+              explain: "<b>Gnomo</b> starts with gn (complex sound). lo gnomo." },
+            { prompt: "___ università", hint: "(the university)", options: ["il", "lo", "la", "l'"], correct: 3,
+              explain: "<b>Università</b> is feminine and starts with a vowel. l'università." },
+            { prompt: "___ yogurt", hint: "(the yogurt)", options: ["il", "lo", "la", "l'"], correct: 1,
+              explain: "<b>Yogurt</b> starts with y (complex sound). lo yogurt." },
+          ]
+        },
+        {
+          name: "Definite Articles — Plural",
+          desc: "Pick the correct plural definite article: i, gli, or le.",
+          color: "blue",
+          questions: [
+            { prompt: "___ libri", hint: "(the books)", options: ["i", "gli", "le"], correct: 0,
+              explain: "<b>Libri</b> is masculine plural, starts with a normal consonant. i libri." },
+            { prompt: "___ zaini", hint: "(the backpacks)", options: ["i", "gli", "le"], correct: 1,
+              explain: "<b>Zaini</b> starts with z (complex sound). Masculine plural complex sound = gli. gli zaini." },
+            { prompt: "___ case", hint: "(the houses)", options: ["i", "gli", "le"], correct: 2,
+              explain: "<b>Case</b> is feminine plural. All feminine plurals use le. le case." },
+            { prompt: "___ amici", hint: "(the friends, m.)", options: ["i", "gli", "le"], correct: 1,
+              explain: "<b>Amici</b> starts with a vowel. Masculine plural before vowels = gli. gli amici." },
+            { prompt: "___ studenti", hint: "(the students)", options: ["i", "gli", "le"], correct: 1,
+              explain: "<b>Studenti</b> starts with s + consonant (st-). Complex sound plural = gli. gli studenti." },
+            { prompt: "___ ragazze", hint: "(the girls)", options: ["i", "gli", "le"], correct: 2,
+              explain: "<b>Ragazze</b> is feminine plural. le ragazze." },
+            { prompt: "___ alberi", hint: "(the trees)", options: ["i", "gli", "le"], correct: 1,
+              explain: "<b>Alberi</b> is masculine plural starting with a vowel. gli alberi." },
+            { prompt: "___ gatti", hint: "(the cats)", options: ["i", "gli", "le"], correct: 0,
+              explain: "<b>Gatti</b> is masculine plural, starts with a normal consonant. i gatti." },
+          ]
+        },
+        {
+          name: "Indefinite Articles",
+          desc: "Pick the correct indefinite article: un, uno, una, or un'.",
+          color: "yellow",
+          questions: [
+            { prompt: "___ libro", hint: "(a book)", options: ["un", "uno", "una", "un'"], correct: 0,
+              explain: "<b>Libro</b> is masculine, normal consonant. un libro." },
+            { prompt: "___ zaino", hint: "(a backpack)", options: ["un", "uno", "una", "un'"], correct: 1,
+              explain: "<b>Zaino</b> starts with z (complex sound). Masculine complex sound = uno. uno zaino." },
+            { prompt: "___ casa", hint: "(a house)", options: ["un", "uno", "una", "un'"], correct: 2,
+              explain: "<b>Casa</b> is feminine, starts with a consonant. una casa." },
+            { prompt: "___ amica", hint: "(a female friend)", options: ["un", "uno", "una", "un'"], correct: 3,
+              explain: "<b>Amica</b> is feminine and starts with a vowel. una contracts to un'. un'amica." },
+            { prompt: "___ amico", hint: "(a male friend)", options: ["un", "uno", "una", "un'"], correct: 0,
+              explain: "<b>Amico</b> is masculine and starts with a vowel. Masculine before vowels stays un (no apostrophe!). un amico." },
+            { prompt: "___ stadio", hint: "(a stadium)", options: ["un", "uno", "una", "un'"], correct: 1,
+              explain: "<b>Stadio</b> starts with s + consonant (st-). Complex sound = uno. uno stadio." },
+            { prompt: "___ idea", hint: "(an idea)", options: ["un", "uno", "una", "un'"], correct: 3,
+              explain: "<b>Idea</b> is feminine and starts with a vowel. un'idea." },
+            { prompt: "___ problema", hint: "(a problem)", options: ["un", "uno", "una", "un'"], correct: 0,
+              explain: "<b>Problema</b> is masculine (Greek origin) despite ending in -a. un problema." },
+          ]
+        },
+        {
+          name: "Preposizioni Articolate",
+          desc: "Build the contraction or pick the correct articulated preposition.",
+          color: "purple",
+          questions: [
+            { prompt: "a + il = ?", hint: "(to + the)", options: ["al", "allo", "alla", "all'"], correct: 0,
+              explain: "a + il = <b>al</b>. Vado al cinema." },
+            { prompt: "di + lo = ?", hint: "(of + the)", options: ["del", "dello", "della", "dell'"], correct: 1,
+              explain: "di + lo = <b>dello</b>. Il libro dello studente." },
+            { prompt: "in + la = ?", hint: "(in + the)", options: ["nel", "nella", "nello", "nell'"], correct: 1,
+              explain: "in + la = <b>nella</b>. Nella casa." },
+            { prompt: "su + il = ?", hint: "(on + the)", options: ["sul", "sullo", "sulla", "sull'"], correct: 0,
+              explain: "su + il = <b>sul</b>. Il libro sul tavolo." },
+            { prompt: "da + gli = ?", hint: "(from + the, m. pl.)", options: ["dai", "dagli", "dalle", "dall'"], correct: 1,
+              explain: "da + gli = <b>dagli</b>. Vengo dagli amici." },
+            { prompt: "Vado ___ cinema.", hint: "(I go to the cinema.)", options: ["al", "allo", "nel", "sul"], correct: 0,
+              explain: "a + il cinema = <b>al</b> cinema. 'Cinema' starts with a normal consonant." },
+            { prompt: "Vengo ___ mercato.", hint: "(I come from the market.)", options: ["dal", "dallo", "del", "nel"], correct: 0,
+              explain: "da + il mercato = <b>dal</b> mercato." },
+            { prompt: "Il colore ___ macchina.", hint: "(The color of the car.)", options: ["della", "sulla", "nella", "alla"], correct: 0,
+              explain: "di + la macchina = <b>della</b> macchina. Possessive 'of'. 'Sulla' would mean 'on the', 'nella' = 'in the', 'alla' = 'to the'." },
+            { prompt: "Abito ___ stesso quartiere.", hint: "(I live in the same neighborhood.)", options: ["nel", "nello", "nella", "nell'"], correct: 1,
+              explain: "'Stesso' starts with s + consonant (st-). in + lo = <b>nello</b>. Nello stesso quartiere." },
+            { prompt: "Il gatto è ___ albero.", hint: "(The cat is on the tree.)", options: ["sul", "sullo", "sull'", "sulla"], correct: 2,
+              explain: "'Albero' starts with a vowel. su + l' = <b>sull'</b>. Sull'albero." },
+          ]
+        },
+        {
+          name: "Mixed Challenge",
+          desc: "All article types in real sentences. Think carefully!",
+          color: "red",
+          questions: [
+            { prompt: "Vorrei ___ pane, per favore.", hint: "(I'd like some bread, please.)", options: ["il", "un", "del", "al"], correct: 2,
+              explain: "'Some bread' = partitive. di + il = <b>del</b> pane. Uncountable quantity." },
+            { prompt: "Parlo con ___ studenti ogni giorno.", hint: "(I speak with the students every day.)", options: ["i", "gli", "le", "dei"], correct: 1,
+              explain: "'Studenti' starts with s + consonant. Masculine plural complex sound = <b>gli</b>." },
+            { prompt: "Camminiamo ___ stadio.", hint: "(We go to the stadium.)", options: ["al", "allo", "nello", "sullo"], correct: 1,
+              explain: "'Stadio' starts with st- (complex sound). a + lo = <b>allo</b> stadio." },
+            { prompt: "Ho comprato ___ mele al mercato.", hint: "(I bought some apples at the market.)", options: ["le", "delle", "dei", "una"], correct: 1,
+              explain: "'Some apples' (countable, unspecified) = indefinite plural. di + le = <b>delle</b> mele." },
+            { prompt: "Esco con ___ zio domani.", hint: "(I'm going out with my uncle tomorrow.)", options: ["il", "lo", "l'", "uno"], correct: 1,
+              explain: "'Zio' starts with z (complex sound). con doesn't contract, so: con <b>lo</b> zio." },
+            { prompt: "___ acqua è essenziale per vivere.", hint: "(Water is essential for living.)", options: ["L'", "La", "Un'", "Dell'"], correct: 0,
+              explain: "General truth about water = definite article. 'Acqua' is feminine + starts with vowel = <b>l'</b>acqua." },
+            { prompt: "Metto le chiavi ___ borsa.", hint: "(I put the keys in the bag.)", options: ["nella", "sulla", "della", "alla"], correct: 0,
+              explain: "in + la borsa = <b>nella</b> borsa. 'Inside the bag.'" },
+            { prompt: "Abbiamo bisogno di ___ psicologo.", hint: "(We need a psychologist.)", options: ["un", "uno", "il", "lo"], correct: 1,
+              explain: "'Psicologo' starts with ps (complex sound). Indefinite masculine + complex sound = <b>uno</b>." },
+            { prompt: "Il libro ___ Rinascimento è interessante.", hint: "(The book about the Renaissance is interesting.)", options: ["del", "sul", "nel", "al"], correct: 1,
+              explain: "'About the Renaissance' = regarding/on the subject of. su + il = <b>sul</b>. 'Sul' means about/regarding." },
+            { prompt: "Non voglio ___ caffè, grazie.", hint: "(I don't want any coffee, thanks.)", options: ["del", "il", "un", "—  (nothing)"], correct: 3,
+              explain: "In negative sentences, the partitive article is dropped. Non voglio caffè. (Not 'non voglio del caffè'.)" },
+          ]
+        }
+      ]
+    };
+
+    // ══════════════════════════════════════════════════════════════
+    //  ENGINE
+    // ══════════════════════════════════════════════════════════════
+
+    var STORAGE_KEY = "test_" + testData.topic;
+    var app = document.getElementById("test-app");
+
+    // Flatten questions
+    var allQuestions = [];
+    var sectionRanges = []; // { start, end, si }
+    for (var s = 0; s < testData.sections.length; s++) {
+      var start = allQuestions.length;
+      var sec = testData.sections[s];
+      for (var q = 0; q < sec.questions.length; q++) {
+        allQuestions.push({ q: sec.questions[q], si: s });
+      }
+      sectionRanges.push({ start: start, end: allQuestions.length, si: s });
+    }
+    var totalQ = allQuestions.length;
+
+    // State: answers[i] = { yourAnswer: idx, correct: bool } or undefined
+    var answers = loadState();
+    var view = "map"; // "map" or "question"
+    var activeQ = -1;
+
+    // ── Persistence ─────────────────────────────────────────
+    function loadState() {
+      try {
+        var data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          // Convert object keys to sparse array
+          var arr = [];
+          for (var k in data) {
+            if (data.hasOwnProperty(k)) arr[parseInt(k)] = data[k];
+          }
+          return arr;
+        }
+      } catch (e) {}
+      return [];
+    }
+
+    function saveState() {
+      var obj = {};
+      for (var i = 0; i < answers.length; i++) {
+        if (answers[i] !== undefined) obj[i] = answers[i];
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    }
+
+    function clearState() {
+      localStorage.removeItem(STORAGE_KEY);
+      answers = [];
+    }
+
+    // ── Stats ────────────────────────────────────────────────
+    function getStats() {
+      var answered = 0, correct = 0, wrong = 0;
+      for (var i = 0; i < totalQ; i++) {
+        if (answers[i] !== undefined) {
+          answered++;
+          if (answers[i].correct) correct++; else wrong++;
+        }
+      }
+      return { answered: answered, correct: correct, wrong: wrong, unanswered: totalQ - answered };
+    }
+
+    function getSectionStats(si) {
+      var range = sectionRanges[si];
+      var answered = 0, correct = 0;
+      for (var i = range.start; i < range.end; i++) {
+        if (answers[i] !== undefined) {
+          answered++;
+          if (answers[i].correct) correct++;
+        }
+      }
+      var total = range.end - range.start;
+      return { answered: answered, correct: correct, wrong: answered - correct, total: total };
+    }
+
+    function findNextUnanswered(fromIdx) {
+      for (var i = (fromIdx !== undefined ? fromIdx : 0); i < totalQ; i++) {
+        if (answers[i] === undefined) return i;
+      }
+      // Wrap around
+      for (var j = 0; j < (fromIdx || 0); j++) {
+        if (answers[j] === undefined) return j;
+      }
+      return -1;
+    }
+
+    // ── MAP VIEW ─────────────────────────────────────────────
+    function renderMap() {
+      view = "map";
+      var stats = getStats();
+      var h = "";
+
+      h += '<div class="test-header">';
+      h += '<h1>Articles Test</h1>';
+      h += '<p>' + totalQ + ' questions across ' + testData.sections.length + ' sections — click any question to answer it</p>';
+      h += '</div>';
+
+      // Progress bar
+      var answeredPct = (stats.answered / totalQ) * 100;
+      var correctPct = (stats.correct / totalQ) * 100;
+      var wrongPct = (stats.wrong / totalQ) * 100;
+      h += '<div class="test-progress">';
+      h += '<div class="test-progress-fill" style="width:' + answeredPct + '%;--g:' + (stats.answered > 0 ? (correctPct / answeredPct * 100) : 100) + '%;background:linear-gradient(90deg,#43a047 ' + (stats.answered > 0 ? (correctPct / answeredPct * 100) : 0) + '%,#e53935 ' + (stats.answered > 0 ? (correctPct / answeredPct * 100) : 0) + '%)"></div>';
+      h += '</div>';
+      h += '<div class="test-progress-stats">';
+      h += '<span>' + stats.answered + ' / ' + totalQ + ' answered</span>';
+      h += '<span><span class="stat-correct">' + stats.correct + ' correct</span> &nbsp; <span class="stat-wrong">' + stats.wrong + ' wrong</span></span>';
+      h += '</div>';
+
+      // Summary banner if all done
+      if (stats.unanswered === 0) {
+        var pct = Math.round((stats.correct / totalQ) * 100);
+        var grade = pct >= 85 ? "great" : (pct >= 60 ? "good" : "needs-work");
+        var gradeText = pct >= 85 ? "Excellent!" : (pct >= 60 ? "Good work, keep practicing!" : "Review the material and try again.");
+        h += '<div class="summary-banner ' + grade + '">';
+        h += '<div class="sb-score">' + pct + '%</div>';
+        h += '<div class="sb-label">' + stats.correct + ' / ' + totalQ + ' correct — ' + gradeText + '</div>';
+        h += '</div>';
+      }
+
+      // Actions
+      h += '<div class="map-actions">';
+      if (stats.unanswered > 0) {
+        h += '<button class="btn-next-unanswered" id="goto-next">Continue (' + stats.unanswered + ' remaining)</button>';
+      }
+      h += '<a class="btn-review" href="index.html">Review Articles</a>';
+      if (stats.answered > 0) {
+        h += '<button class="btn-reset" id="reset-btn">Reset Progress</button>';
+      }
+      h += '</div>';
+
+      // Section grids
+      for (var si = 0; si < testData.sections.length; si++) {
+        var sec = testData.sections[si];
+        var range = sectionRanges[si];
+        var ss = getSectionStats(si);
+
+        h += '<div class="map-section">';
+        h += '<div class="map-section-head ' + sec.color + '">';
+        h += '<h3>Section ' + (si + 1) + ': ' + sec.name + '</h3>';
+        if (ss.answered > 0) {
+          h += '<span class="sec-score">' + ss.correct + '/' + ss.total + '</span>';
+        }
+        h += '</div>';
+
+        h += '<div class="q-grid">';
+        for (var i = range.start; i < range.end; i++) {
+          var qd = allQuestions[i].q;
+          var a = answers[i];
+          var cls = "q-card";
+          var tag = "";
+          if (a !== undefined) {
+            cls += a.correct ? " correct" : " wrong";
+            tag = a.correct
+              ? '<div class="q-answer-tag">' + esc(qd.options[a.yourAnswer]) + '</div>'
+              : '<div class="q-answer-tag">' + esc(qd.options[a.yourAnswer]) + ' &rarr; ' + esc(qd.options[qd.correct]) + '</div>';
+          } else {
+            cls += " unanswered";
+          }
+
+          var preview = qd.prompt.replace(/___/g, "___");
+          h += '<div class="' + cls + '" data-qi="' + i + '">';
+          h += '<div class="q-num">Q' + (i + 1) + '</div>';
+          h += '<div class="q-preview">' + esc(preview) + '</div>';
+          h += tag;
+          h += '</div>';
+        }
+        h += '</div></div>';
+      }
+
+      app.innerHTML = h;
+
+      // Bind card clicks
+      var cards = app.querySelectorAll(".q-card");
+      for (var c = 0; c < cards.length; c++) {
+        cards[c].addEventListener("click", function () {
+          activeQ = parseInt(this.getAttribute("data-qi"));
+          renderQuestion();
+        });
+      }
+
+      // Bind action buttons
+      var gotoBtn = document.getElementById("goto-next");
+      if (gotoBtn) {
+        gotoBtn.addEventListener("click", function () {
+          var next = findNextUnanswered(0);
+          if (next >= 0) { activeQ = next; renderQuestion(); }
+        });
+      }
+
+      var resetBtn = document.getElementById("reset-btn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", function () {
+          if (confirm("Reset all progress? This cannot be undone.")) {
+            clearState();
+            renderMap();
+          }
+        });
+      }
+    }
+
+    // ── QUESTION VIEW ────────────────────────────────────────
+    function renderQuestion() {
+      view = "question";
+      var idx = activeQ;
+      var item = allQuestions[idx];
+      var qd = item.q;
+      var sec = testData.sections[item.si];
+      var existing = answers[idx]; // might be already answered
+      var isAnswered = existing !== undefined;
+
+      var h = "";
+
+      // Back to map + question label
+      h += '<div class="test-q-label">';
+      h += 'Section ' + (item.si + 1) + ': ' + sec.name + ' &nbsp;&mdash;&nbsp; Question ' + (idx + 1) + ' of ' + totalQ;
+      h += '</div>';
+
+      h += '<div class="test-card">';
+
+      // Prompt
+      var promptHtml = esc(qd.prompt).replace(/___/g, '<span class="gap">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+      h += '<div class="test-prompt">' + promptHtml + '</div>';
+      if (qd.hint) h += '<div class="test-hint">' + esc(qd.hint) + '</div>';
+
+      // Options
+      h += '<div class="test-options">';
+      for (var i = 0; i < qd.options.length; i++) {
+        var ocls = "test-option";
+        if (isAnswered) {
+          ocls += " disabled";
+          if (i === qd.correct) ocls += " was-correct";
+          if (i === existing.yourAnswer && !existing.correct) ocls += " was-wrong";
+        }
+        h += '<button class="' + ocls + '" data-idx="' + i + '">' + esc(qd.options[i]) + '</button>';
+      }
+      h += '</div>';
+
+      // Feedback
+      if (isAnswered) {
+        var fbCls = existing.correct ? "correct" : "wrong";
+        h += '<div class="test-feedback show ' + fbCls + '">';
+        h += (existing.correct ? "<b>Correct!</b> " : "<b>Not quite.</b> ") + qd.explain;
+        h += '</div>';
+        // AI explain button
+        h += '<button class="ai-explain-btn" id="ai-explain"><span class="ai-icon">&#x2728;</span> Explain with AI</button>';
+        h += '<div id="ai-box-container"></div>';
+      } else {
+        h += '<div class="test-feedback" id="feedback"></div>';
+      }
+
+      h += '</div>';
+
+      // Navigation
+      h += '<div class="q-nav">';
+      h += '<button class="btn-map" id="back-map">All Questions</button>';
+      if (idx > 0) h += '<button class="btn-prev" id="prev-q">&larr; Prev</button>';
+
+      // Next: prefer next unanswered, fall back to sequential next
+      var nextUnanswered = findNextUnanswered(idx + 1);
+      if (idx < totalQ - 1) {
+        h += '<button class="btn-next" id="next-q">Next &rarr;</button>';
+      }
+      if (!isAnswered) {
+        // no extra button needed
+      } else if (nextUnanswered >= 0) {
+        h += '<button class="btn-next-unanswered" id="goto-next-q" style="margin-left:auto">Next Unanswered</button>';
+      }
+      h += '</div>';
+
+      app.innerHTML = h;
+
+      // Bind
+      document.getElementById("back-map").addEventListener("click", renderMap);
+
+      var prevBtn = document.getElementById("prev-q");
+      if (prevBtn) prevBtn.addEventListener("click", function () { activeQ--; renderQuestion(); });
+
+      var nextBtn = document.getElementById("next-q");
+      if (nextBtn) nextBtn.addEventListener("click", function () { activeQ++; renderQuestion(); });
+
+      var gotoNextBtn = document.getElementById("goto-next-q");
+      if (gotoNextBtn) gotoNextBtn.addEventListener("click", function () {
+        activeQ = nextUnanswered;
+        renderQuestion();
+      });
+
+      // Bind option clicks (only if not yet answered)
+      if (!isAnswered) {
+        var opts = app.querySelectorAll(".test-option");
+        for (var j = 0; j < opts.length; j++) {
+          opts[j].addEventListener("click", handleAnswer);
+        }
+      }
+
+      // Bind AI explain button
+      var aiBtn = document.getElementById("ai-explain");
+      if (aiBtn) {
+        aiBtn.addEventListener("click", function () {
+          aiExplain(idx, qd, existing);
+        });
+      }
+    }
+
+    function handleAnswer(e) {
+      var idx = parseInt(e.target.getAttribute("data-idx"));
+      var item = allQuestions[activeQ];
+      var qd = item.q;
+      var isCorrect = idx === qd.correct;
+
+      answers[activeQ] = { yourAnswer: idx, correct: isCorrect };
+      saveState();
+
+      // Re-render the question (now in answered state)
+      renderQuestion();
+
+      // Scroll feedback into view
+      var fb = app.querySelector(".test-feedback");
+      if (fb) fb.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // ── AI Explain ─────────────────────────────────────────
+    async function aiExplain(idx, qd, answer) {
+      var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
+      if (!key) { alert("Missing env.js — API key not found"); return; }
+
+      var btn = document.getElementById("ai-explain");
+      var container = document.getElementById("ai-box-container");
+      if (!btn || !container) return;
+
+      // If already has content, toggle it off
+      if (container.innerHTML && !container.querySelector(".ai-box.loading")) {
+        container.innerHTML = "";
+        btn.innerHTML = '<span class="ai-icon">&#x2728;</span> Explain with AI';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="ai-icon">&#x2728;</span> Thinking...';
+      container.innerHTML = '<div class="ai-box loading">Generating explanation...</div>';
+
+      var wasCorrect = answer.correct;
+      var userAnswer = qd.options[answer.yourAnswer];
+      var correctAnswer = qd.options[qd.correct];
+
+      var prompt = "You are an Italian grammar tutor. A student just answered a quiz question. " +
+        "Generate a clear, helpful HTML explanation.\n\n" +
+        "Question: " + qd.prompt + "\n" +
+        "Hint: " + (qd.hint || "") + "\n" +
+        "Options: " + qd.options.join(", ") + "\n" +
+        "Correct answer: " + correctAnswer + "\n" +
+        "Student's answer: " + userAnswer + "\n" +
+        "Student was: " + (wasCorrect ? "CORRECT" : "WRONG") + "\n\n" +
+        "Generate HTML (no markdown, no code fences) that:\n" +
+        "1. Explains the grammar rule behind this question clearly\n" +
+        (wasCorrect
+          ? "2. Reinforces why their answer is correct with a brief note\n"
+          : "2. Explains specifically why \"" + userAnswer + "\" is wrong and why \"" + correctAnswer + "\" is right\n") +
+        "3. Gives 2 more example sentences using the correct form\n\n" +
+        "Use these CSS classes for styling:\n" +
+        "- <div class=\"ai-rule\">...</div> for the grammar rule box\n" +
+        (wasCorrect
+          ? "- <div class=\"ai-correct-reason\">...</div> for the reinforcement\n"
+          : "- <div class=\"ai-wrong-reason\">...</div> for why their answer was wrong\n" +
+            "- <div class=\"ai-correct-reason\">...</div> for why the correct answer is right\n") +
+        "Keep it concise (under 200 words). Use <b> for key Italian words. Write in English but include Italian examples.";
+
+      try {
+        var res = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": key,
+            "anthropic-version": "2023-06-01",
+            "anthropic-dangerous-direct-browser-access": "true"
+          },
+          body: JSON.stringify({
+            model: "claude-haiku-4-5-20251001",
+            max_tokens: 600,
+            messages: [{ role: "user", content: prompt }]
+          })
+        });
+
+        var data = await res.json();
+        if (data.error) {
+          container.innerHTML = '<div class="ai-box">Error: ' + esc(data.error.message || "API error") + '</div>';
+        } else {
+          var html = data.content[0].text;
+          container.innerHTML = '<div class="ai-box">' + html + '</div>';
+        }
+      } catch (e) {
+        container.innerHTML = '<div class="ai-box">Error: ' + esc(e.message) + '</div>';
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '<span class="ai-icon">&#x2728;</span> Hide AI Explanation';
+    }
+
+    function esc(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // ── Start ────────────────────────────────────────────────
+    renderMap();
+
+  })();
+  </script>
+</body>
+</html>

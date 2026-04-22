@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verb Conjugation Drill — Italian</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Setup ── */
+    .setup-header { text-align: center; margin-bottom: 20px; }
+    .setup-header h1 { font-size: 1.5em; margin: 0 0 4px; }
+    .setup-header p { font-size: 0.85em; color: #888; margin: 0; }
+
+    .setup-group { background: #fff; border-radius: 12px; padding: 18px 22px; margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .setup-group h3 { margin: 0 0 10px; font-size: 0.95em; color: #333; }
+    .setup-actions-row { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .setup-actions-row button { padding: 5px 14px; border: 1px solid #ddd; border-radius: 6px;
+      background: #f5f7fa; font-size: 0.78em; font-weight: 600; cursor: pointer; color: #555; }
+    .setup-actions-row button:hover { background: #e3f2fd; border-color: #1e88e5; color: #1565c0; }
+
+    .verb-pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+    .verb-pick { padding: 10px 14px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;
+      background: #fafafa; transition: all 0.15s; text-align: center; }
+    .verb-pick:hover { border-color: #1e88e5; background: #e3f2fd; }
+    .verb-pick.selected { border-color: #1e88e5; background: #e3f2fd; }
+    .verb-pick .vp-name { font-weight: 700; font-size: 0.95em; color: #1a1a1a; }
+    .verb-pick .vp-meaning { font-size: 0.75em; color: #888; margin-top: 2px; }
+    .verb-pick .vp-tag { font-size: 0.65em; font-weight: 600; padding: 1px 6px; border-radius: 8px;
+      display: inline-block; margin-top: 4px; }
+    .vp-tag.regular { background: #e8f5e9; color: #2e7d32; }
+    .vp-tag.irregular { background: #fff3e0; color: #e65100; }
+
+    .preset-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .preset-btn { padding: 8px 18px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;
+      background: #fafafa; font-size: 0.85em; font-weight: 600; color: #555; transition: all 0.15s; }
+    .preset-btn:hover { border-color: #1e88e5; background: #e3f2fd; color: #1565c0; }
+    .preset-btn.selected { border-color: #1e88e5; background: #e3f2fd; color: #1565c0; }
+
+    .count-btns { display: flex; gap: 8px; }
+    .count-btn { padding: 8px 20px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;
+      background: #fafafa; font-size: 0.85em; font-weight: 600; color: #555; transition: all 0.15s; }
+    .count-btn:hover { border-color: #1e88e5; }
+    .count-btn.selected { border-color: #1e88e5; background: #e3f2fd; color: #1565c0; }
+
+    .start-btn { display: block; margin: 20px auto 0; padding: 14px 48px; background: #1e88e5; color: #fff;
+      border: none; border-radius: 10px; font-size: 1em; font-weight: 700; cursor: pointer; }
+    .start-btn:hover { background: #1565c0; }
+    .start-btn:disabled { opacity: 0.5; cursor: default; }
+
+    /* ── Drill ── */
+    .drill-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+      font-size: 0.82em; color: #888; }
+    .drill-score { font-weight: 600; }
+    .drill-score .sc { color: #2e7d32; }
+    .drill-score .sw { color: #c62828; }
+    .drill-streak { color: #f57c00; font-weight: 600; }
+
+    .drill-card { background: #fff; border-radius: 14px; padding: 28px 30px; margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-left: 5px solid #1e88e5; text-align: center; }
+    .drill-verb { font-size: 1.6em; font-weight: 700; color: #1a1a1a; margin-bottom: 4px;
+      text-transform: uppercase; letter-spacing: 1px; }
+    .drill-tense { font-size: 0.95em; color: #1e88e5; font-weight: 600; margin-bottom: 2px; }
+    .drill-pronoun { font-size: 1.15em; color: #555; margin-bottom: 18px; }
+
+    .drill-input-row { display: flex; gap: 10px; justify-content: center; max-width: 400px; margin: 0 auto; }
+    .drill-input { flex: 1; padding: 12px 16px; border: 2px solid #ddd; border-radius: 10px;
+      font-size: 1.1em; text-align: center; font-family: inherit; outline: none; }
+    .drill-input:focus { border-color: #1e88e5; }
+    .drill-input.correct { border-color: #43a047; background: #f1f8e9; }
+    .drill-input.wrong { border-color: #e53935; background: #fef0ef; }
+    .drill-input.accent { border-color: #f57c00; background: #fff8e1; }
+
+    .accent-bar { display: flex; gap: 6px; justify-content: center; margin-top: 10px; }
+    .accent-btn { width: 36px; height: 36px; border: 1px solid #ddd; border-radius: 6px;
+      background: #f5f7fa; font-size: 1em; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-family: inherit; color: #333; }
+    .accent-btn:hover { background: #e3f2fd; border-color: #1e88e5; }
+
+    .drill-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
+    .drill-actions button { padding: 10px 24px; border: none; border-radius: 8px; font-size: 0.88em;
+      font-weight: 600; cursor: pointer; }
+    .btn-check { background: #1e88e5; color: #fff; }
+    .btn-check:hover { background: #1565c0; }
+    .btn-skip { background: #f5f5f5; color: #888; }
+    .btn-skip:hover { background: #e0e0e0; }
+    .btn-advance { background: #43a047; color: #fff; }
+    .btn-advance:hover { background: #2e7d32; }
+
+    .drill-feedback { margin-top: 16px; padding: 12px 18px; border-radius: 8px; font-size: 0.9em;
+      display: none; text-align: center; }
+    .drill-feedback.show { display: block; }
+    .drill-feedback.correct { background: #e8f5e9; color: #1b5e20; }
+    .drill-feedback.wrong { background: #fbe9e7; color: #b71c1c; }
+    .drill-feedback.accent { background: #fff8e1; color: #e65100; }
+    .drill-feedback .fb-answer { font-weight: 700; font-size: 1.1em; }
+
+    /* ── Results ── */
+    .results-score { text-align: center; margin: 16px 0; }
+    .results-score .rs-pct { font-size: 2.4em; font-weight: 700; }
+    .results-score .rs-pct.great { color: #2e7d32; }
+    .results-score .rs-pct.good { color: #f57c00; }
+    .results-score .rs-pct.bad { color: #c62828; }
+    .results-score .rs-label { font-size: 0.9em; color: #888; }
+    .results-verbs { margin: 16px 0; }
+    .rv-row { display: flex; justify-content: space-between; padding: 6px 10px; font-size: 0.88em;
+      border-radius: 4px; }
+    .rv-row:nth-child(even) { background: #f5f7fa; }
+    .rv-row .rv-name { font-weight: 600; }
+    .rv-row .rv-score { font-weight: 600; }
+    .mistake-row { padding: 10px 14px; background: #fff8e1; border-left: 3px solid #f9a825;
+      border-radius: 6px; margin-bottom: 6px; font-size: 0.85em; display: flex; justify-content: space-between;
+      align-items: center; gap: 12px; }
+    .mistake-row .mr-prompt { color: #555; }
+    .mistake-row .mr-yours { color: #c62828; text-decoration: line-through; }
+    .mistake-row .mr-correct { color: #2e7d32; font-weight: 600; }
+    .results-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .results-actions button { padding: 10px 24px; border: none; border-radius: 8px; font-size: 0.88em;
+      font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <script src="env.js"></script>
+  <script src="nav.js"></script>
+  <script src="chat.js"></script>
+  <script src="dist.js"></script>
+
+  <div id="drill-app"></div>
+
+  <script>
+  (function () {
+    var app = document.getElementById("drill-app");
+
+    // ── Tense presets ────────────────────────────────────────
+    // Each entry: [moodIndex, tenseIndex]
+    var PRESETS = {
+      most_used: [[0,0],[0,1],[0,3],[0,6],[2,0]],
+      simple: [[0,0],[0,1],[0,2],[0,6],[1,0],[1,2],[2,0],[3,0]],
+      compound: [[0,3],[0,4],[0,5],[0,7],[1,1],[1,3],[2,1]],
+      all: null
+    };
+    var PRESET_LABELS = {
+      most_used: "Most Used (5)",
+      simple: "Simple Tenses",
+      compound: "Compound Tenses",
+      all: "All Tenses"
+    };
+
+    // Mood prefix for display
+    var MOOD_PREFIX = ["", "Cong. ", "Cond. ", "", "", "", ""];
+
+    // ── State ────────────────────────────────────────────────
+    var selectedVerbs = {};
+    var selectedPreset = "most_used";
+    var selectedCount = 20;
+    var drillItems = [];
+    var drillIndex = 0;
+    var drillAnswered = false;
+    var score = { correct: 0, wrong: 0, accent: 0 };
+    var streak = 0;
+    var maxStreak = 0;
+    var mistakes = [];
+
+    // ── Load verb data ───────────────────────────────────────
+    // Uses a hidden iframe so each data.js gets its own scope
+    // (avoids const verbData redeclaration). Works on file://.
+    function loadVerbData(name) {
+      return new Promise(function (resolve, reject) {
+        var iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = "_loader.html?v=" + encodeURIComponent(name);
+
+        var timer = setTimeout(function () {
+          cleanup();
+          reject(new Error("Timeout loading " + name));
+        }, 5000);
+
+        function cleanup() {
+          clearTimeout(timer);
+          window.removeEventListener("message", onMsg);
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }
+
+        function onMsg(e) {
+          if (!e.data || e.data.v !== name) return;
+          cleanup();
+          if (e.data.err) reject(new Error(e.data.err));
+          else resolve(e.data.d);
+        }
+
+        window.addEventListener("message", onMsg);
+        document.body.appendChild(iframe);
+      });
+    }
+
+    // ── Extract drill items from verb data ───────────────────
+    function stripHtml(s) { return s.replace(/<[^>]+>/g, "").trim(); }
+
+    function expandAnswer(raw) {
+      raw = raw.replace(/!/g, "").trim();
+      // Handle " / " alternatives: "va' / vai" → ["va'", "vai"]
+      if (raw.includes(" / ")) {
+        var alts = raw.split(" / ").map(function(s) { return s.trim(); });
+        var all = [];
+        for (var a = 0; a < alts.length; a++) {
+          all = all.concat(expandSlash(alts[a]));
+        }
+        return all;
+      }
+      // Handle parenthesized alternatives: "devo (debbo)" → ["devo", "debbo"]
+      var parens = [];
+      var primary = raw.replace(/\s*\(([^)]+)\)/g, function(_, p) { parens.push(p.trim()); return ""; }).trim();
+      var results = expandSlash(primary);
+      for (var p = 0; p < parens.length; p++) {
+        results = results.concat(expandSlash(parens[p]));
+      }
+      return results;
+    }
+
+    function expandSlash(s) {
+      if (!s.includes("/")) return [s];
+      var match = s.match(/^(.*?)(\w+)(\/\w(?:\/\w)*)$/);
+      if (!match) return [s];
+      var prefix = match[1];
+      var base = match[2];
+      var suffixes = match[3].split("/").filter(Boolean);
+      var results = [prefix + base];
+      for (var i = 0; i < suffixes.length; i++) {
+        results.push((prefix + base.slice(0, -1) + suffixes[i]).trim());
+      }
+      return results;
+    }
+
+    function stripAccents(s) {
+      return s.replace(/[àáâã]/g,"a").replace(/[èéêë]/g,"e").replace(/[ìíîï]/g,"i").replace(/[òóôõ]/g,"o").replace(/[ùúûü]/g,"u");
+    }
+
+    function extractItems(vd, preset) {
+      var items = [];
+      var filter = preset ? PRESETS[preset] : null;
+
+      for (var mi = 0; mi < Math.min(vd.moods.length, 4); mi++) {
+        var mood = vd.moods[mi];
+        if (!mood.tenses) continue;
+        for (var ti = 0; ti < mood.tenses.length; ti++) {
+          if (filter && !filter.some(function(f) { return f[0] === mi && f[1] === ti; })) continue;
+          var tense = mood.tenses[ti];
+          if (!tense.conjugations) continue;
+          var tenseLabel = MOOD_PREFIX[mi] + (tense.name || mood.name);
+          for (var ci = 0; ci < tense.conjugations.length; ci++) {
+            var row = tense.conjugations[ci];
+            var raw = stripHtml(row[1] || "");
+            if (!raw || raw === "\u2014" || raw === "-" || raw === "\u2013") continue;
+            items.push({
+              verb: vd.verb,
+              tenseLabel: tenseLabel,
+              pronoun: row[0],
+              answerDisplay: raw,
+              answers: expandAnswer(raw.toLowerCase()),
+            });
+          }
+        }
+      }
+
+      // Non-finite forms (moods 4-6)
+      for (var mi2 = 4; mi2 < vd.moods.length; mi2++) {
+        var mood2 = vd.moods[mi2];
+        if (!mood2.tenses) continue;
+        // Skip if filtering and "all" not selected
+        if (filter) continue;
+        for (var ti2 = 0; ti2 < mood2.tenses.length; ti2++) {
+          var tense2 = mood2.tenses[mi2 === 4 ? ti2 : 0];
+          if (!tense2 || !tense2.conjugations) continue;
+          for (var ci2 = 0; ci2 < tense2.conjugations.length; ci2++) {
+            var row2 = tense2.conjugations[ci2];
+            var raw2 = stripHtml(row2[1] || "");
+            if (!raw2 || raw2 === "\u2014") continue;
+            items.push({
+              verb: vd.verb,
+              tenseLabel: mood2.name + (tense2.name ? " " + tense2.name : ""),
+              pronoun: row2[0],
+              answerDisplay: raw2,
+              answers: expandAnswer(raw2.toLowerCase()),
+            });
+          }
+        }
+      }
+
+      return items;
+    }
+
+    function shuffle(arr) {
+      for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+      }
+      return arr;
+    }
+
+    // ── Check answer ─────────────────────────────────────────
+    function checkAnswer(input, item) {
+      var clean = input.toLowerCase().trim();
+      if (!clean) return "empty";
+      var answers = item.answers;
+      // Exact match
+      for (var i = 0; i < answers.length; i++) {
+        if (clean === answers[i]) return "correct";
+      }
+      // Accent-stripped match
+      var cleanStripped = stripAccents(clean);
+      for (var j = 0; j < answers.length; j++) {
+        if (cleanStripped === stripAccents(answers[j])) return "accent";
+      }
+      return "wrong";
+    }
+
+    // ── SETUP SCREEN ─────────────────────────────────────────
+    function renderSetup() {
+      var h = "";
+      h += '<div class="setup-header"><h1>Verb Conjugation Drill</h1>';
+      h += '<p>Type the conjugated form from memory — no multiple choice!</p></div>';
+
+      // Verb selection
+      h += '<div class="setup-group">';
+      h += '<h3>Select Verbs</h3>';
+      h += '<div class="setup-actions-row">';
+      h += '<button id="sel-all">Select All</button>';
+      h += '<button id="sel-none">Clear</button>';
+      h += '<button id="sel-irreg">Irregular Only</button>';
+      h += '</div>';
+      h += '<div class="verb-pick-grid">';
+      for (var i = 0; i < verbs.length; i++) {
+        var v = verbs[i];
+        var sel = selectedVerbs[v.name] ? " selected" : "";
+        h += '<div class="verb-pick' + sel + '" data-name="' + v.name + '">';
+        h += '<div class="vp-name">' + v.name + '</div>';
+        h += '<div class="vp-meaning">' + v.meaning + '</div>';
+        h += '<span class="vp-tag ' + (v.regular ? "regular" : "irregular") + '">' + (v.regular ? "Regular" : "Irregular") + '</span>';
+        h += '</div>';
+      }
+      h += '</div></div>';
+
+      // Tense preset
+      h += '<div class="setup-group">';
+      h += '<h3>Tenses</h3>';
+      h += '<div class="preset-btns">';
+      var presetKeys = ["most_used", "simple", "compound", "all"];
+      for (var p = 0; p < presetKeys.length; p++) {
+        var pk = presetKeys[p];
+        var psel = pk === selectedPreset ? " selected" : "";
+        h += '<button class="preset-btn' + psel + '" data-preset="' + pk + '">' + PRESET_LABELS[pk] + '</button>';
+      }
+      h += '</div></div>';
+
+      // Count
+      h += '<div class="setup-group">';
+      h += '<h3>Questions</h3>';
+      h += '<div class="count-btns">';
+      var counts = [10, 20, 40, 0];
+      var countLabels = ["10", "20", "40", "All"];
+      for (var c = 0; c < counts.length; c++) {
+        var csel = counts[c] === selectedCount ? " selected" : "";
+        h += '<button class="count-btn' + csel + '" data-count="' + counts[c] + '">' + countLabels[c] + '</button>';
+      }
+      h += '</div></div>';
+
+      // Start
+      var verbCount = Object.keys(selectedVerbs).length;
+      h += '<button class="start-btn" id="start-drill"' + (verbCount === 0 ? ' disabled' : '') + '>Start Drill' + (verbCount > 0 ? ' (' + verbCount + ' verb' + (verbCount > 1 ? 's' : '') + ')' : '') + '</button>';
+
+      app.innerHTML = h;
+
+      // Bind verb picks
+      var picks = app.querySelectorAll(".verb-pick");
+      for (var vp = 0; vp < picks.length; vp++) {
+        picks[vp].addEventListener("click", function () {
+          var name = this.getAttribute("data-name");
+          if (selectedVerbs[name]) delete selectedVerbs[name];
+          else selectedVerbs[name] = true;
+          renderSetup();
+        });
+      }
+
+      // Bind select all/none/irreg
+      document.getElementById("sel-all").addEventListener("click", function () {
+        for (var i = 0; i < verbs.length; i++) selectedVerbs[verbs[i].name] = true;
+        renderSetup();
+      });
+      document.getElementById("sel-none").addEventListener("click", function () {
+        selectedVerbs = {};
+        renderSetup();
+      });
+      document.getElementById("sel-irreg").addEventListener("click", function () {
+        selectedVerbs = {};
+        for (var i = 0; i < verbs.length; i++) {
+          if (!verbs[i].regular) selectedVerbs[verbs[i].name] = true;
+        }
+        renderSetup();
+      });
+
+      // Bind presets
+      var presetBtns = app.querySelectorAll(".preset-btn");
+      for (var pb = 0; pb < presetBtns.length; pb++) {
+        presetBtns[pb].addEventListener("click", function () {
+          selectedPreset = this.getAttribute("data-preset");
+          renderSetup();
+        });
+      }
+
+      // Bind counts
+      var countBtns = app.querySelectorAll(".count-btn");
+      for (var cb = 0; cb < countBtns.length; cb++) {
+        countBtns[cb].addEventListener("click", function () {
+          selectedCount = parseInt(this.getAttribute("data-count"));
+          renderSetup();
+        });
+      }
+
+      // Bind start
+      document.getElementById("start-drill").addEventListener("click", startDrill);
+    }
+
+    // ── Start Drill ──────────────────────────────────────────
+    async function startDrill() {
+      var names = Object.keys(selectedVerbs);
+      if (names.length === 0) return;
+
+      app.innerHTML = '<div class="setup-header"><h1>Loading...</h1><p>Fetching conjugation data</p></div>';
+
+      var errors = [];
+      drillItems = [];
+      for (var i = 0; i < names.length; i++) {
+        try {
+          var vd = await loadVerbData(names[i]);
+          var items = extractItems(vd, selectedPreset === "all" ? null : selectedPreset);
+          drillItems = drillItems.concat(items);
+        } catch (e) {
+          errors.push(names[i] + ": " + e.message);
+        }
+      }
+
+      if (drillItems.length === 0) {
+        var h = '<div class="setup-header"><h1>Could not load verb data</h1>';
+        h += '<p style="color:#c62828">No drill items were generated.</p></div>';
+        if (errors.length > 0) {
+          h += '<div class="setup-group" style="border-left:4px solid #e53935">';
+          h += '<h3 style="color:#c62828">Errors</h3>';
+          for (var e = 0; e < errors.length; e++) h += '<div style="font-size:0.85em;color:#b71c1c;margin-bottom:4px">' + esc(errors[e]) + '</div>';
+          h += '</div>';
+        }
+        h += '<div class="setup-group">';
+        h += '<h3>How to fix</h3>';
+        h += '<p style="font-size:0.85em;color:#555">If you opened this file directly (file://), your browser blocks loading other files. Run a local server instead:</p>';
+        h += '<pre style="background:#f5f5f5;padding:10px 14px;border-radius:6px;font-size:0.85em;overflow-x:auto">npx serve .\n# or\npython -m http.server\n# then open http://localhost:3000/drill.html</pre>';
+        h += '</div>';
+        h += '<button class="start-btn" id="back-setup">Back to Setup</button>';
+        app.innerHTML = h;
+        document.getElementById("back-setup").addEventListener("click", renderSetup);
+        return;
+      }
+
+      shuffle(drillItems);
+      if (selectedCount > 0 && drillItems.length > selectedCount) {
+        drillItems = drillItems.slice(0, selectedCount);
+      }
+
+      drillIndex = 0;
+      drillAnswered = false;
+      score = { correct: 0, wrong: 0, accent: 0 };
+      streak = 0;
+      maxStreak = 0;
+      mistakes = [];
+
+      renderDrill();
+    }
+
+    // ── DRILL SCREEN ─────────────────────────────────────────
+    function renderDrill() {
+      if (drillIndex >= drillItems.length) { renderResults(); return; }
+
+      var item = drillItems[drillIndex];
+      var total = drillItems.length;
+      var done = score.correct + score.wrong;
+      var h = "";
+
+      // Top bar
+      h += '<div class="drill-top">';
+      h += '<span>' + (drillIndex + 1) + ' / ' + total + '</span>';
+      h += '<span class="drill-score"><span class="sc">' + score.correct + '</span> / <span class="sw">' + score.wrong + '</span></span>';
+      if (streak >= 3) h += '<span class="drill-streak">' + streak + ' streak</span>';
+      h += '</div>';
+
+      // Progress
+      h += '<div class="test-progress"><div class="test-progress-fill" style="width:' + (drillIndex / total * 100) + '%;background:#1e88e5"></div></div>';
+
+      // Card
+      h += '<div class="drill-card">';
+      h += '<div class="drill-verb">' + esc(item.verb) + '</div>';
+      h += '<div class="drill-tense">' + esc(item.tenseLabel) + '</div>';
+      h += '<div class="drill-pronoun">' + esc(item.pronoun) + '</div>';
+
+      h += '<div class="drill-input-row">';
+      h += '<input class="drill-input" id="drill-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the conjugation...">';
+      h += '</div>';
+
+      // Accent helper
+      h += '<div class="accent-bar">';
+      var accents = ["\u00e0", "\u00e8", "\u00e9", "\u00ec", "\u00f2", "\u00f9"];
+      for (var a = 0; a < accents.length; a++) {
+        h += '<button class="accent-btn" data-char="' + accents[a] + '">' + accents[a] + '</button>';
+      }
+      h += '</div>';
+
+      // Actions
+      h += '<div class="drill-actions" id="drill-actions">';
+      h += '<button class="btn-check" id="btn-check">Check</button>';
+      h += '<button class="btn-skip" id="btn-skip">Skip</button>';
+      h += '</div>';
+
+      // Feedback
+      h += '<div class="drill-feedback" id="drill-feedback"></div>';
+
+      h += '</div>';
+
+      app.innerHTML = h;
+      drillAnswered = false;
+
+      var input = document.getElementById("drill-input");
+      input.focus();
+
+      // Accent buttons
+      var accentBtns = app.querySelectorAll(".accent-btn");
+      for (var ab = 0; ab < accentBtns.length; ab++) {
+        accentBtns[ab].addEventListener("click", function () {
+          var ch = this.getAttribute("data-char");
+          var inp = document.getElementById("drill-input");
+          var pos = inp.selectionStart;
+          inp.value = inp.value.slice(0, pos) + ch + inp.value.slice(pos);
+          inp.focus();
+          inp.selectionStart = inp.selectionEnd = pos + 1;
+        });
+      }
+
+      // Check button
+      document.getElementById("btn-check").addEventListener("click", doCheck);
+      document.getElementById("btn-skip").addEventListener("click", doSkip);
+
+      // Enter key
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (drillAnswered) advance();
+          else doCheck();
+        }
+      });
+    }
+
+    function doCheck() {
+      if (drillAnswered) return;
+      var input = document.getElementById("drill-input");
+      var val = input.value;
+      if (!val.trim()) { input.focus(); return; }
+
+      var item = drillItems[drillIndex];
+      var result = checkAnswer(val, item);
+      drillAnswered = true;
+
+      var fb = document.getElementById("drill-feedback");
+
+      if (result === "correct") {
+        score.correct++;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+        input.classList.add("correct");
+        fb.className = "drill-feedback show correct";
+        fb.innerHTML = '<span class="fb-answer">Correct!</span>';
+      } else if (result === "accent") {
+        score.correct++;
+        score.accent++;
+        streak++;
+        if (streak > maxStreak) maxStreak = streak;
+        input.classList.add("accent");
+        fb.className = "drill-feedback show accent";
+        fb.innerHTML = 'Close! Watch the accent: <span class="fb-answer">' + esc(item.answerDisplay) + '</span>';
+      } else {
+        score.wrong++;
+        streak = 0;
+        input.classList.add("wrong");
+        fb.className = "drill-feedback show wrong";
+        fb.innerHTML = 'Correct answer: <span class="fb-answer">' + esc(item.answerDisplay) + '</span>';
+        mistakes.push({ item: item, yours: val.trim() });
+      }
+
+      input.disabled = true;
+
+      // Replace actions with advance button
+      var actions = document.getElementById("drill-actions");
+      actions.innerHTML = '<button class="btn-advance" id="btn-advance">Next (Enter)</button>';
+      document.getElementById("btn-advance").addEventListener("click", advance);
+      document.getElementById("btn-advance").focus();
+    }
+
+    function doSkip() {
+      if (drillAnswered) return;
+      var item = drillItems[drillIndex];
+      drillAnswered = true;
+      score.wrong++;
+      streak = 0;
+      mistakes.push({ item: item, yours: "(skipped)" });
+
+      var input = document.getElementById("drill-input");
+      input.disabled = true;
+      input.classList.add("wrong");
+
+      var fb = document.getElementById("drill-feedback");
+      fb.className = "drill-feedback show wrong";
+      fb.innerHTML = 'Answer: <span class="fb-answer">' + esc(item.answerDisplay) + '</span>';
+
+      var actions = document.getElementById("drill-actions");
+      actions.innerHTML = '<button class="btn-advance" id="btn-advance">Next (Enter)</button>';
+      document.getElementById("btn-advance").addEventListener("click", advance);
+      document.getElementById("btn-advance").focus();
+    }
+
+    function advance() {
+      drillIndex++;
+      renderDrill();
+    }
+
+    // ── RESULTS SCREEN ───────────────────────────────────────
+    function renderResults() {
+      var total = drillItems.length;
+      var pct = Math.round((score.correct / total) * 100);
+      var grade = pct >= 85 ? "great" : (pct >= 60 ? "good" : "bad");
+
+      var h = "";
+      h += '<div class="setup-header"><h1>Drill Complete</h1></div>';
+
+      h += '<div class="setup-group">';
+      h += '<div class="results-score">';
+      h += '<div class="rs-pct ' + grade + '">' + pct + '%</div>';
+      h += '<div class="rs-label">' + score.correct + ' / ' + total + ' correct';
+      if (score.accent > 0) h += ' (' + score.accent + ' with accent issues)';
+      h += '</div>';
+      if (maxStreak >= 3) h += '<div class="rs-label" style="color:#f57c00;margin-top:4px">Best streak: ' + maxStreak + '</div>';
+      h += '</div>';
+
+      // Per-verb breakdown
+      var verbStats = {};
+      for (var i = 0; i < drillItems.length; i++) {
+        var v = drillItems[i].verb;
+        if (!verbStats[v]) verbStats[v] = { correct: 0, total: 0 };
+        verbStats[v].total++;
+      }
+      for (var m = 0; m < mistakes.length; m++) {
+        var mv = mistakes[m].item.verb;
+        // mistakes are wrong, so don't increment correct
+      }
+      // Calculate correct per verb = total - wrong
+      var wrongPerVerb = {};
+      for (var m2 = 0; m2 < mistakes.length; m2++) {
+        var mv2 = mistakes[m2].item.verb;
+        wrongPerVerb[mv2] = (wrongPerVerb[mv2] || 0) + 1;
+      }
+      h += '<div class="results-verbs">';
+      for (var vn in verbStats) {
+        var vs = verbStats[vn];
+        var vc = vs.total - (wrongPerVerb[vn] || 0);
+        h += '<div class="rv-row"><span class="rv-name">' + vn + '</span>';
+        h += '<span class="rv-score">' + vc + '/' + vs.total + '</span></div>';
+      }
+      h += '</div>';
+      h += '</div>';
+
+      // Mistakes
+      if (mistakes.length > 0) {
+        h += '<div class="setup-group">';
+        h += '<h3>Mistakes (' + mistakes.length + ')</h3>';
+        for (var mk = 0; mk < mistakes.length; mk++) {
+          var mi = mistakes[mk];
+          h += '<div class="mistake-row">';
+          h += '<span class="mr-prompt">' + esc(mi.item.verb) + ' \u2014 ' + esc(mi.item.tenseLabel) + ' \u2014 ' + esc(mi.item.pronoun) + '</span>';
+          h += '<span><span class="mr-yours">' + esc(mi.yours) + '</span> \u2192 <span class="mr-correct">' + esc(mi.item.answerDisplay) + '</span></span>';
+          h += '</div>';
+        }
+        h += '</div>';
+      }
+
+      // Actions
+      h += '<div class="results-actions">';
+      if (mistakes.length > 0) {
+        h += '<button class="btn-check" id="retry-mistakes">Retry Mistakes (' + mistakes.length + ')</button>';
+      }
+      h += '<button class="btn-advance" id="drill-again">Drill Again</button>';
+      h += '<button class="btn-skip" id="new-setup">New Setup</button>';
+      h += '</div>';
+
+      app.innerHTML = h;
+
+      if (document.getElementById("retry-mistakes")) {
+        document.getElementById("retry-mistakes").addEventListener("click", function () {
+          drillItems = shuffle(mistakes.map(function (m) { return m.item; }));
+          drillIndex = 0;
+          drillAnswered = false;
+          score = { correct: 0, wrong: 0, accent: 0 };
+          streak = 0;
+          maxStreak = 0;
+          mistakes = [];
+          renderDrill();
+        });
+      }
+      document.getElementById("drill-again").addEventListener("click", startDrill);
+      document.getElementById("new-setup").addEventListener("click", renderSetup);
+    }
+
+    function esc(s) {
+      return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // ── Init ─────────────────────────────────────────────────
+    renderSetup();
+  })();
+  </script>
+</body>
+</html>
