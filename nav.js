@@ -32,6 +32,7 @@
       { folder: "espressioni", label: "Expressions" },
       { folder: "numeri",      label: "Numbers" },
       { folder: "si",          label: "Si" },
+      { folder: "indicazioni", label: "Directions" },
     ],
   };
 

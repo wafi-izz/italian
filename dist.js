@@ -9,7 +9,9 @@ const verbs = [
   { name: "fare",    meaning: "to do / to make",           type: "are", regular: false, path: "fare/index.html" },
   { name: "andare",  meaning: "to go",                     type: "are", regular: false, path: "andare/index.html" },
   { name: "parlare", meaning: "to speak / to talk",        type: "are", regular: true,  path: "parlare/index.html" },
+  { name: "pensare", meaning: "to think",                  type: "are", regular: true,  path: "pensare/index.html" },
   { name: "mangiare", meaning: "to eat",                   type: "are", regular: true,  path: "mangiare/index.html" },
+  { name: "pensare", meaning: "to think",                  type: "are", regular: true,  path: "pensare/index.html" },
 
   // -ERE
   { name: "essere",  meaning: "to be",                     type: "ere", regular: false, path: "essere/index.html" },
@@ -18,6 +20,8 @@ const verbs = [
   { name: "potere",  meaning: "to be able to / can",       type: "ere", regular: false, path: "potere/index.html" },
   { name: "volere",  meaning: "to want",                   type: "ere", regular: false, path: "volere/index.html" },
   { name: "sapere",  meaning: "to know",                   type: "ere", regular: false, path: "sapere/index.html" },
+  { name: "sedere",  meaning: "to sit",                     type: "ere", regular: false, path: "sedere/index.html" },
+  { name: "credere", meaning: "to believe",                 type: "ere", regular: true,  path: "credere/index.html" },
 
   // -IRE
   { name: "dormire", meaning: "to sleep",                  type: "ire", regular: true,  path: "dormire/index.html" },
@@ -77,10 +81,16 @@ function renderIndex() {
     h += '</div>';
   }
 
-  // Drill link
-  h += '<div style="text-align:center;margin:24px 0 8px">';
+  // Drill + Rules links
+  h += '<div style="text-align:center;margin:24px 0 8px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">';
+  h += '<div>';
   h += '<a href="drill.html" style="display:inline-block;padding:12px 32px;background:#1e88e5;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95em;box-shadow:0 2px 8px rgba(30,136,229,0.3)">Conjugation Drill</a>';
   h += '<div style="font-size:0.78em;color:#999;margin-top:6px">Type conjugations from memory</div>';
+  h += '</div>';
+  h += '<div>';
+  h += '<a href="desinenze/index.html" style="display:inline-block;padding:12px 32px;background:#2e7d32;color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.95em;box-shadow:0 2px 8px rgba(46,125,50,0.3)">Regular Endings</a>';
+  h += '<div style="font-size:0.78em;color:#999;margin-top:6px">All -ARE / -ERE / -IRE rules</div>';
+  h += '</div>';
   h += '</div>';
 
   app.innerHTML = h;
