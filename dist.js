@@ -9,9 +9,7 @@ const verbs = [
   { name: "fare",    meaning: "to do / to make",           type: "are", regular: false, path: "fare/index.html" },
   { name: "andare",  meaning: "to go",                     type: "are", regular: false, path: "andare/index.html" },
   { name: "parlare", meaning: "to speak / to talk",        type: "are", regular: true,  path: "parlare/index.html" },
-  { name: "pensare", meaning: "to think",                  type: "are", regular: true,  path: "pensare/index.html" },
   { name: "mangiare", meaning: "to eat",                   type: "are", regular: true,  path: "mangiare/index.html" },
-  { name: "pensare", meaning: "to think",                  type: "are", regular: true,  path: "pensare/index.html" },
 
   // -ERE
   { name: "essere",  meaning: "to be",                     type: "ere", regular: false, path: "essere/index.html" },
