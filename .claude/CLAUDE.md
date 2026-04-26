@@ -13,7 +13,7 @@ italian/
   render.js               # Shared renderer — reads verbData global, builds HTML into #app
   nav.js                  # Sticky navigation (5 sections + sub-nav for phases)
   chat.js                 # Floating AI tutor + selection toolbar (on every page)
-  env.js                  # CLAUDE_API_KEY for client-side API calls (DO NOT COMMIT)
+  env.js                  # API key bootstrap — reads CLAUDE_API_KEY from localStorage (committable, no secret)
   style.css               # Light theme, shared by all pages
   conjugation.html        # Standalone dark-themed conjugation reference for "dire"
   phone.html              # Standalone self-contained page (untracked)
@@ -535,5 +535,5 @@ async function loadVerbData(name) {
 - **Accented characters required:** à, è, é, ì, ò, ù — never ASCII substitutes.
 - **HTML in conjugation strings:** `<b>` tags highlight stems/endings. No other HTML tags in conjugation cells.
 - **{curly braces} in examples:** wrap the conjugated verb form. Renderer converts to `<span class="ex-verb">`.
-- **env.js must not be committed.** It holds the API key. Listed in `.gitignore`.
+- **env.js is committable.** It holds no secret — it reads the API key from `localStorage` (key `claude_api_key`). Each user enters their own key via the chat panel's 🔑 button or `setClaudeKey("...")` in the console.
 - **index.html per verb folder** is identical except for the `<title>` tag. Copy from any existing verb.

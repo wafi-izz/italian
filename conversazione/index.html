@@ -263,7 +263,7 @@
       var existing = div.querySelector(".msg-translation");
       if (existing) { existing.remove(); return; }
 
-      var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
+      var key = window.CLAUDE_API_KEY || "";
       if (!key) return;
 
       var transDiv = document.createElement("div");
@@ -355,8 +355,9 @@
 
     // ── API call ────────────────────────────────────────────
     async function callAI(extraUserMsg) {
-      var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
-      if (!key) { alert("Missing env.js — API key not found"); return []; }
+      if (typeof window.requireClaudeKey === "function" && !window.requireClaudeKey()) return [];
+      var key = window.CLAUDE_API_KEY || "";
+      if (!key) return [];
 
       var convo = getActiveConvo();
       if (!convo) return [];

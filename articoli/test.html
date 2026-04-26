@@ -635,8 +635,9 @@
 
     // ── AI Explain ─────────────────────────────────────────
     async function aiExplain(idx, qd, answer) {
-      var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
-      if (!key) { alert("Missing env.js — API key not found"); return; }
+      if (typeof window.requireClaudeKey === "function" && !window.requireClaudeKey()) return;
+      var key = window.CLAUDE_API_KEY || "";
+      if (!key) return;
 
       var btn = document.getElementById("ai-explain");
       var container = document.getElementById("ai-box-container");

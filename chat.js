@@ -1,7 +1,8 @@
 /* ═══════════════════════════════════════════════════════════
    chat.js — Floating AI assistant available on every page.
    Reads the current page content for context.
-   Requires env.js to be loaded first (provides CLAUDE_API_KEY).
+   Requires env.js to be loaded first (provides CLAUDE_API_KEY +
+   requireClaudeKey() / promptForClaudeKey() helpers).
    ═══════════════════════════════════════════════════════════ */
 
 (function () {
@@ -26,6 +27,8 @@
     ".chat-head { padding:12px 16px; background:#1e88e5; color:#fff; font-weight:600;" +
     "  font-size:.9em; display:flex; justify-content:space-between; align-items:center; }",
     ".chat-close { background:none; border:none; color:#fff; font-size:18px; cursor:pointer; padding:0 4px; }",
+    ".chat-key { background:none; border:none; color:#fff; font-size:14px; cursor:pointer; padding:0 6px; opacity:.85; }",
+    ".chat-key:hover { opacity:1; }",
 
     /* Messages area */
     ".chat-msgs { flex:1; overflow-y:auto; padding:12px 14px; font-size:.88em; line-height:1.55;" +
@@ -78,7 +81,9 @@
   var panel = document.createElement("div");
   panel.className = "chat-panel";
   panel.innerHTML =
-    '<div class="chat-head"><span>AI Tutor</span><button class="chat-close">&times;</button></div>' +
+    '<div class="chat-head"><span>AI Tutor</span>' +
+    '<span><button class="chat-key" title="Set API key">&#x1F511;</button>' +
+    '<button class="chat-close">&times;</button></span></div>' +
     '<div class="chat-msgs" id="chat-msgs"></div>' +
     '<div class="chat-input"><textarea id="chat-q" placeholder="Ask about this page... (Ctrl+Enter)"></textarea>' +
     '<button id="chat-send">Send</button></div>';
@@ -89,6 +94,7 @@
   var input = panel.querySelector("#chat-q");
   var sendBtn = panel.querySelector("#chat-send");
   var closeBtn = panel.querySelector(".chat-close");
+  var keyBtn = panel.querySelector(".chat-key");
 
   // ── Toggle ──────────────────────────────────────────────
   fab.addEventListener("click", function () {
@@ -97,6 +103,9 @@
   });
   closeBtn.addEventListener("click", function () {
     panel.classList.remove("open");
+  });
+  keyBtn.addEventListener("click", function () {
+    if (typeof window.promptForClaudeKey === "function") window.promptForClaudeKey();
   });
 
   // ── Conversation history ────────────────────────────────
@@ -127,10 +136,11 @@
 
   // ── Send message ────────────────────────────────────────
   async function send() {
-    var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
     var q = input.value.trim();
-    if (!key) { alert("Missing env.js — API key not found"); return; }
     if (!q) return;
+    if (typeof window.requireClaudeKey === "function" && !window.requireClaudeKey()) return;
+    var key = window.CLAUDE_API_KEY || "";
+    if (!key) return;
 
     addBubble("user", q);
     history.push({ role: "user", content: q });
@@ -246,8 +256,9 @@
     hideSelBar();
     if (!selectedText) return;
 
-    var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
-    if (!key) { alert("Missing env.js — API key not found"); return; }
+    if (typeof window.requireClaudeKey === "function" && !window.requireClaudeKey()) return;
+    var key = window.CLAUDE_API_KEY || "";
+    if (!key) return;
 
     // Show loading state inline
     transTip.textContent = "Translating...";
@@ -300,8 +311,9 @@
     hideTransTip();
     if (!selectedText) return;
 
-    var key = (typeof CLAUDE_API_KEY !== "undefined") ? CLAUDE_API_KEY : "";
-    if (!key) { alert("Missing env.js — API key not found"); return; }
+    if (typeof window.requireClaudeKey === "function" && !window.requireClaudeKey()) return;
+    var key = window.CLAUDE_API_KEY || "";
+    if (!key) return;
 
     panel.classList.add("open");
     var question = 'Translate & explain: "' + selectedText + '"';
