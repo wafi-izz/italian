@@ -99,7 +99,12 @@
   // ── Toggle ──────────────────────────────────────────────
   fab.addEventListener("click", function () {
     panel.classList.toggle("open");
-    if (panel.classList.contains("open")) input.focus();
+    if (panel.classList.contains("open")) {
+      if (!window.CLAUDE_API_KEY && typeof window.promptForClaudeKey === "function") {
+        window.promptForClaudeKey();
+      }
+      input.focus();
+    }
   });
   closeBtn.addEventListener("click", function () {
     panel.classList.remove("open");

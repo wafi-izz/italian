@@ -25,10 +25,10 @@
   };
 
   window.promptForClaudeKey = function () {
-    var current = window.CLAUDE_API_KEY ? " (a key is already saved — leave blank to clear)" : "";
     var entered = window.prompt(
-      "Enter your Anthropic API key" + current + ".\n\n" +
-      "Get one at console.anthropic.com. It is stored only in this browser's localStorage."
+      "Anthropic API key (leave blank to clear).\n\n" +
+      "Get one at console.anthropic.com. Stored only in this browser's localStorage.",
+      window.CLAUDE_API_KEY || ""
     );
     if (entered === null) return false;
     window.setClaudeKey(entered);
