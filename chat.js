@@ -231,9 +231,8 @@
     }
   });
 
-  // ── Speak button: text-to-speech ───────────────────────
+  // ── Speak button: text-to-speech (keeps toolbar open for replay) ──
   selBar.querySelector("#sel-speak").addEventListener("click", function () {
-    hideSelBar();
     if (!selectedText) return;
     window.speechSynthesis.cancel();
     var utter = new SpeechSynthesisUtterance(selectedText);
